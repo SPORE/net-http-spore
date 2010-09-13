@@ -1,0 +1,12 @@
+name: apitest
+author:
+  - franck cuny <franck@lumberjaph.net>
+version: 0.01
+api_base_url: http://localhost:5000
+methods:
+  new_user:
+    method: POST
+    path: /user/
+  list_users:
+    method: GET
+    path: /user/list

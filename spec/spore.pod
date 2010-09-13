@@ -1,0 +1,105 @@
+=head1 NAME
+
+Spore - Specifications to a POrtable Rest Environment
+
+=head1 SYNOPSIS
+
+The ReST
+(L<http://en.wikipedia.org/wiki/Representational_State_Transfer|Representational
+State Transfer>) paradigm have improved the way we communicate between
+services and clients. It's easy to understand an API and to implement
+the communications.
+
+=head1 API DESCRIPTION
+
+An API should provide a description file. The description should be in JSON
+format.
+
+The description can have the following fields:
+
+=over 4
+
+=item B<name> (optional)
+
+A simple name to describe the specification (eg: CouchDB)
+
+=item B<author> (optional)
+
+A list of authors for this specification
+
+=item B<api_base_url> (optional)
+
+If the API have a fixed URL
+
+=item B<api_format> (optional)
+
+A list of supported format (eg: JSON, XML)
+
+=item B<version> (optinal)
+
+A version of the current description
+
+=item B<authentication> (optional)
+
+A boolean to inform if this API require authentication for all the methods
+
+=item B<methods> (required)
+
+A list of methods
+
+=back
+
+The desciption B<MUST> contains a list of at least one method.
+
+=over 4
+
+=item B<method> (required)
+
+An HTTP method (GET/POST/PUT/DELETE)
+
+=item B<path> (required)
+
+Path for the given method. The path can contains B<placeholder>. A placeholder
+B<MUST> begins with a <:>:
+
+    /:database
+
+=item B<params> (optional)
+
+A list of parameters. This list will be used to replace value in placeholder,
+and if not used in the path, will be added to the query.
+
+=item B<required> (optional)
+
+A list of required parameters. Parameters that are required B<MUST NOT> be
+repeted in the B<params> field.
+
+=item B<expected> (optional)
+
+A list of accepted HTTP status for this method. (eg: 200, 201).
+
+=item B<description> (optional)
+
+A simple description for the method. This should not be considered as
+documentation.
+
+    Fetch a document from a CouchDB database
+
+=item B<authentication> (optional)
+
+A boolean to define if this method requires authentication
+
+=item B<api_base_url> (optional)
+
+If this method require a different api_base_url
+
+=item B<documentation> (optional)
+
+A complete documentation for the given method
+
+=back
+
+=head3 SAMPLE
+
+=head3 CALLS
+

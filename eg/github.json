@@ -1,0 +1,36 @@
+{
+   "declare" : {
+      "api_base_url" : "http://github.com/api/v2/",
+      "api_format_mode" : "content-type",
+      "api_format" : "json"
+   },
+   "methods" : {
+      "user_information" : {
+         "params" : [
+            "username",
+            "format"
+         ],
+         "required" : [
+            "format",
+            "username"
+         ],
+         "path" : "/:format/user/show/:username",
+         "method" : "GET",
+         "expected" : [
+            "200"
+         ]
+      },
+      "user_following" : {
+         "params" : [
+            "user",
+            "format"
+         ],
+         "required" : [
+            "user",
+            "format"
+         ],
+         "path" : "/:format/user/show/:user/followers",
+         "method" : "GET"
+      }
+   }
+}

@@ -1,0 +1,13 @@
+{
+   "methods" : {
+      "new_user" : {
+         "path" : "/user/",
+         "method" : "POST"
+      }
+   },
+   "declare" : {
+      "api_base_url" : "http://localhost:5000",
+      "api_format_mode" : "content-type",
+      "api_format" : "json"
+   }
+}

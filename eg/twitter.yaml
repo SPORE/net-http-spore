@@ -1,0 +1,19 @@
+declare:
+  api_base_url: http://api.twitter.com/1
+  api_format: json
+  api_format_mode: append
+methods:
+  public_timeline:
+    method: GET
+    path: /statuses/public_timeline
+    params: 
+      - skip_user
+  home_timeline:
+    method: GET
+    path: /statuses/home_timeline
+    params:
+      - since_id
+      - max_id
+      - count
+      - page
+      - skip_user
