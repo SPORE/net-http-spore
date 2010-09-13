@@ -39,7 +39,6 @@ sub _path {
     my $path = $self->env->{PATH_INFO};
     my @params = @{ $self->env->{'spore.params'} || [] };
 
-
     my $j = 0;
     for (my $i = 0; $i < scalar @params; $i++) {
         my $key = $params[$i];
@@ -86,7 +85,7 @@ sub uri {
     my $path_info    = shift;
     my $query_string = shift;
 
-    if ( !$path_info || !$query_string ) {
+    if ( !defined $path_info || !defined $query_string ) {
         my @path_info = $self->_path;
         $path_info    = $path_info[0] if !$path_info;
         $query_string = $path_info[1] if !$query_string;
@@ -98,7 +97,7 @@ sub uri {
 
     my $path = URI::Escape::uri_escape($path_info || '', $path_escape_class);
 
-    if (defined $query_string) {
+    if ($query_string) {
         $path .= '?' . $query_string;
     }
 
@@ -144,7 +143,7 @@ sub finalize {
     $self->env->{PATH_INFO} = $path_info;
     $self->env->{QUERY_STRING} = $query_string || '';
 
-    my $uri = $self->uri($path_info, $query_string);
+    my $uri = $self->uri($path_info, $query_string || '');
 
     my $request =
       HTTP::Request->new( $self->method => $uri, $self->headers );
