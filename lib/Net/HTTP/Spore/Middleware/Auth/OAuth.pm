@@ -15,6 +15,9 @@ has [qw/consumer_key consumer_secret token token_secret/] => (
 sub call {
     my ( $self, $req ) = @_;
 
+    return unless $req->env->{'spore.authentication'} == 1;
+
+    my $uri = $req->uri;
     my $request = Net::OAuth->request('protected resource')->new(
         version          => '1.0',
         consumer_key     => $self->consumer_key,
@@ -24,7 +27,7 @@ sub call {
         request_method   => $req->method,
         signature_method => 'HMAC-SHA1',
         timestamp        => time,
-        nonce            => MIME::Base64::encode( time . $$ . rand ),
+        nonce            => MIME::Base64::encode( time . $$ . rand, '' ),
         request_url      => $req->uri,
         # extra_params     => \%post_args,
     );
