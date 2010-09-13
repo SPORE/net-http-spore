@@ -1,5 +1,7 @@
 package Net::HTTP::Spore;
 
+# ABSTRACT: SPORE client
+
 use Moose;
 
 use IO::All;
@@ -14,7 +16,7 @@ our $VERSION = 0.01;
 sub new_from_spec {
     my ($class, $spec_file, %args) = @_;
 
-    if (! -f $spec_file) {
+    unless (-f $spec_file) {
         Carp::confess ("$spec_file does not exists");
     }
 
@@ -29,13 +31,15 @@ sub new_from_spec {
         Carp::confess( "unable to parse JSON spec: " . $_ );
     };
 
-    my $spore_class =
+    my ($spore_class, $spore_object);
+
+    # XXX should we let the possibility to override this super class, or add
+    # another superclasses?
+    $spore_class =
       Class::MOP::Class->create_anon_class(
           superclasses => ['Net::HTTP::Spore::Core']);
 
-    my $spore_object;
     try {
-
         my $api_base_url;
         if ( $spec->{api_base_url} && !$args{api_base_url} ) {
             $args{api_base_url} = $spec->{api_base_url};
@@ -64,5 +68,32 @@ sub _add_methods {
     $class;
 }
 
-
 1;
+
+=head1 SYNOPSIS
+
+    my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
+
+    $client->enable('Auth::OAuth');
+    $client->enable('Format::JSON');
+
+    my $timeline = $client->public_timeline(format => 'json');
+    if ($timeline->status == 200) {
+        my $tweets = $timeline->body;
+        foreach my $tweet (@$tweets) {
+            print $tweet->{user}->{screen_name}. " says ".$tweet->{text}."\n";
+        }
+    }
+
+    my $friends_timeline = $client->friends_timeline(format => 'json');
+
+=head1 DESCRIPTION
+
+
+=head2 METHODS
+
+=over 4
+
+=item B<new_from_spec>($specification_file, %args)
+
+=back
