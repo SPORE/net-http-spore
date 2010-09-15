@@ -78,9 +78,8 @@ sub _add_methods {
     $client->enable('Format::JSON');
 
     my $timeline = $client->public_timeline(format => 'json');
-    if ($timeline->status == 200) {
-        my $tweets = $timeline->body;
-        foreach my $tweet (@$tweets) {
+    my $tweets = $timeline->body;
+    foreach my $tweet (@$tweets) {
             print $tweet->{user}->{screen_name}. " says ".$tweet->{text}."\n";
         }
     }
@@ -89,11 +88,13 @@ sub _add_methods {
 
 =head1 DESCRIPTION
 
-
 =head2 METHODS
 
 =over 4
 
-=item B<new_from_spec>($specification_file, %args)
+=item new_from_spec($specification_file, %args
+
+Create and return a L<Net::HTTP::Spore::Core> object, with methods
+generated from the specification file.
 
 =back
