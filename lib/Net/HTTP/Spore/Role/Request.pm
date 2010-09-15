@@ -4,16 +4,8 @@ package Net::HTTP::Spore::Role::Request;
 
 use Try::Tiny;
 use Moose::Role;
-use MooseX::Types::URI qw/Uri/;
 
 use Net::HTTP::Spore::Request;
-
-has api_base_url => (
-    is       => 'rw',
-    isa      => Uri,
-    coerce   => 1,
-    required => 1,
-);
 
 sub http_request {
     my ( $self, $env ) = @_;
