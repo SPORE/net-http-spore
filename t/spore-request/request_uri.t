@@ -12,16 +12,14 @@ my $env = {
     REQUEST_URI     => '',
     QUERY_STRING    => '',
     SERVER_PROTOCOL => 'HTTP/1.0',
-    'spore.params'  => [qw/database test_spore key foo/],
 };
 
 ok my $request = Net::HTTP::Spore::Request->new($env);
 
-is $request->path_info, '/test_spore/foo';
+is $request->request_uri, '';
 
-$env->{'spore.params'} = [qw/database test_spore key foo another key/];
-is $request->path_info, '/test_spore/foo';
+$env->{REQUEST_URI} = '/';
 
-is $request->path, '/test_spore/foo';
+is $request->request_uri, '/';
 
 done_testing;
