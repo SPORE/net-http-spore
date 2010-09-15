@@ -20,7 +20,8 @@
             "database"
          ],
          "path" : "/:database/_all_docs",
-         "method" : "GET"
+         "method" : "GET",
+         "authentication": 1
       },
       "create_document_with_id" : {
          "required" : [
