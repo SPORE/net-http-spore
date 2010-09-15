@@ -153,11 +153,19 @@ A boolean to specify if this method requires authentication
 
     authentication: 0
 
-=item B<api_base_url> (optional)
+=item B<base_url> (optional)
 
 Specify an url if this method requires a different api_base_url
 
     api_base_url: http://api.twitter.com/1/
+
+=item B<format> (optional)
+
+A list of supported format
+
+    api_format:
+      - json
+      - xml
 
 =item B<documentation> (optional)
 
