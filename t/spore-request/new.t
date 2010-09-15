@@ -17,7 +17,6 @@ my $req = Net::HTTP::Spore::Request->new(
 isa_ok( $req, 'Net::HTTP::Spore::Request' );
 
 is( $req->method,   'GET',                    'method' );
-is( $req->protocol, 'HTTP/1.1',               'protocol' );
 is( $req->uri,      'http://example.com/foo', 'uri' );
 is( $req->port,     80,                       'port' );
 is( $req->scheme,   'http',                   'url_scheme' );
