@@ -14,13 +14,13 @@ use Net::HTTP::Spore::Core;
 our $VERSION = 0.01;
 
 sub new_from_spec {
-    my ($class, $spec_file, %args) = @_;
+    my ( $class, $spec_file, %args ) = @_;
 
-    unless (-f $spec_file) {
-        Carp::confess ("$spec_file does not exists");
+    unless ( -f $spec_file ) {
+        Carp::confess("$spec_file does not exists");
     }
 
-    my ($content, $spec);
+    my ( $content, $spec );
 
     $content < io($spec_file);
 
@@ -31,13 +31,13 @@ sub new_from_spec {
         Carp::confess( "unable to parse JSON spec: " . $_ );
     };
 
-    my ($spore_class, $spore_object);
+    my ( $spore_class, $spore_object );
 
     # XXX should we let the possibility to override this super class, or add
     # another superclasses?
     $spore_class =
       Class::MOP::Class->create_anon_class(
-          superclasses => ['Net::HTTP::Spore::Core']);
+        superclasses => ['Net::HTTP::Spore::Core'] );
 
     try {
         my $api_base_url;
@@ -48,15 +48,25 @@ sub new_from_spec {
             die "api_base_url is missing!";
         }
 
-        $spore_object = $spore_class->new_object(%args);
-        $spore_object = _add_methods($spore_object, $spec->{methods});
+        if ( $spec->{api_format} ) {
+            $args{api_format} = $spec->{api_format};
+        }
 
-    }catch{
-        Carp::confess("unable to create new Net::HTTP::Spore object: ".$_);
+        if ( $spec->{authentication} ) {
+            $args{authentication} = $spec->{authentication};
+        }
+
+        $spore_object = $spore_class->new_object(%args);
+        $spore_object = _add_methods( $spore_object, $spec->{methods} );
+
+    }
+    catch {
+        Carp::confess( "unable to create new Net::HTTP::Spore object: " . $_ );
     };
 
     return $spore_object;
 }
+
 
 sub _add_methods {
     my ($class, $methods_spec) = @_;
