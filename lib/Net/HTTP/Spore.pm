@@ -13,28 +13,21 @@ use Net::HTTP::Spore::Core;
 
 our $VERSION = 0.01;
 
-sub new_from_spec {
-    my ( $class, $spec_file, %args ) = @_;
+sub new_from_string {
+    my ($class, $string, %args) = @_;
 
-    unless ( -f $spec_file ) {
-        Carp::confess("$spec_file does not exists");
-    }
-
-    my ( $content, $spec );
-
-    $content < io($spec_file);
+    my $spec;
 
     try {
-        $spec = JSON::decode_json($content);
-    }
-    catch {
-        Carp::confess( "unable to parse JSON spec: " . $_ );
+        $spec = JSON::decode_json($string);
+    }catch{
+        Carp::confess("unable to parse JSON spec: ".$_);
     };
 
     my ( $spore_class, $spore_object );
-
     # XXX should we let the possibility to override this super class, or add
     # another superclasses?
+
     $spore_class =
       Class::MOP::Class->create_anon_class(
         superclasses => ['Net::HTTP::Spore::Core'] );
@@ -67,6 +60,29 @@ sub new_from_spec {
     return $spore_object;
 }
 
+sub new_from_spec {
+    my ( $class, $spec_file, %args ) = @_;
+
+    Carp::confess("specification file is missing") unless $spec_file;
+
+    my ( $content, $spec );
+
+    if ( $spec_file =~ m!^http(s)?://! ) {
+        my $uri     = URI->new($spec_file);
+        my $req = HTTP::Request->new(GET => $spec_file);
+        my $ua  = LWP::UserAgent->new();
+        my $res = $ua->request( $req );
+        $content = $res->content;
+    }
+    else {
+        unless ( -f $spec_file ) {
+            Carp::confess("$spec_file does not exists");
+        }
+        $content < io($spec_file);
+    }
+
+    $class->new_from_string( $content, %args );
+}
 
 sub _add_methods {
     my ($class, $methods_spec) = @_;
@@ -102,9 +118,15 @@ sub _add_methods {
 
 =over 4
 
-=item new_from_spec($specification_file, %args
+=item new_from_spec($specification_file, %args)
 
 Create and return a L<Net::HTTP::Spore::Core> object, with methods
-generated from the specification file.
+generated from the specification file. The specification file can
+either be a file on disk or a remote URL.
+
+=item new_from_string($specification_string, %args)
+
+Create and return a L<Net::HTTP::Spore::Core> object, with methods
+generated from the specification string.
 
 =back
