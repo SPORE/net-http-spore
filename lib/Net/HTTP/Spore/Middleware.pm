@@ -18,13 +18,17 @@ sub response_cb {
 }
 
 sub wrap {
-    my ($self, @args) = @_;
+    my ($self, $cond, @args) = @_;
 
     if (!ref $self) {
         $self = $self->new(@args);
     }
+
     return sub {
-        $self->call(@_);
+        my $request = shift;
+        if ($cond->($request)) {
+            $self->call($request, @_);
+        }
     };
 }
 
