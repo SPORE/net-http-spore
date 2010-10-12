@@ -83,6 +83,8 @@ If the environment contains a B<payload> (under the name 'spore.payload'), it sh
 
 =head1 METHODS
 
+=over 4
+
 =item serializer_key
 
 name of the extension serializer should check to be sure to not encode a payload already encoded, or set the headers that have already been defined
@@ -116,3 +118,5 @@ this method returns 1 if serialization have not already been done
 this method returns 1 if deserialization have not already been done
 
 =item call
+
+=back

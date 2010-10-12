@@ -163,5 +163,34 @@ sub wrap {
 
 =head1 SYNOPSIS
 
+    my $spore_method = Net::HTTP::Spore::Meta::Method->wrap(
+        'user_timeline',
+        method => 'GET',
+        path   => '/user/:name'
+    );
+
 =head1 DESCRIPTION
 
+=head1 METHODS
+
+=over 4
+
+=item B<path>
+
+=item B<method>
+
+=item B<description>
+
+=item B<authentication>
+
+=item B<base_url>
+
+=item B<format>
+
+=item B<expected>
+
+=item B<params>
+
+=item B<documentation>
+
+=back

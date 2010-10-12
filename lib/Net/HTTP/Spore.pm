@@ -100,19 +100,35 @@ sub _add_methods {
 
     my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
 
-    $client->enable('Auth::OAuth');
     $client->enable('Format::JSON');
+    $client->enable('Auth::OAuth');
 
     my $timeline = $client->public_timeline(format => 'json');
     my $tweets = $timeline->body;
+
     foreach my $tweet (@$tweets) {
-            print $tweet->{user}->{screen_name}. " says ".$tweet->{text}."\n";
-        }
+        print $tweet->{user}->{screen_name}. " says ".$tweet->{text}."\n";
     }
 
     my $friends_timeline = $client->friends_timeline(format => 'json');
 
 =head1 DESCRIPTION
+
+This module is an implementation of the SPORE specification. To use this client, you need to use or to write a SPORE specification of an API. Some specifications are available L<http://github.com/SPORE/api-description>.
+
+=head2 CLIENT CREATION
+
+First you need to create a client. This can be done using two methods, B<new_from_spec> and B<new_from_string>. The client will read the specification file to create a appropriate methods to interact with the API.
+
+=head2 MIDDLEWARES
+
+It's possible to activate some middlewares to extend the usage of the client. If you're using an API that discuss in JSON, you can enable the middleware L<Net::HTTP::Spore::Middleware::JSON>.
+
+    $client->enable('Format::JSON');
+
+or only on some path
+
+    $client->enable_if(sub{$_->[0]->path =~ m!/path/to/json/stuff!}, 'Format::JSON');
 
 =head2 METHODS
 

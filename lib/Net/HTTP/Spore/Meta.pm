@@ -1,5 +1,7 @@
 package Net::HTTP::Spore::Meta;
 
+# ABSTRACT: Meta class for all SPORE object
+
 use Moose;
 use Moose::Exporter;
 use Moose::Util::MetaRole;

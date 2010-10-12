@@ -1,5 +1,7 @@
 package Net::HTTP::Spore::Middleware;
 
+# ABSTRACT: middlewares base class
+
 use strict;
 use warnings;
 
