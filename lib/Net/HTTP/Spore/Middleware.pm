@@ -4,6 +4,7 @@ package Net::HTTP::Spore::Middleware;
 
 use strict;
 use warnings;
+use Scalar::Util;
 
 sub new {
     my $class = shift;
@@ -22,7 +23,7 @@ sub response_cb {
 sub wrap {
     my ($self, $cond, @args) = @_;
 
-    if (!ref $self) {
+    if (!Scalar::Util::blessed($self)) {
         $self = $self->new(@args);
     }
 
