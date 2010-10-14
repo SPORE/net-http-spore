@@ -10,13 +10,13 @@ has _json_parser => (
     is      => 'rw',
     isa     => 'JSON',
     lazy    => 1,
-    default => sub { JSON->new->allow_nonref },
+    default => sub { JSON->new->utf8(1)->allow_nonref },
 );
 
 sub encode       { $_[0]->_json_parser->encode( $_[1] ); }
 sub decode       { $_[0]->_json_parser->decode( $_[1] ); }
 sub accept_type  { ( 'Accept' => 'application/json' ) }
-sub content_type { ( 'Content-Type' => 'application/json' ) }
+sub content_type { ( 'Content-Type' => 'application/json;' ) }
 
 1;
 
