@@ -2,10 +2,11 @@ package Net::HTTP::Spore::Meta::Method;
 
 # ABSTRACT: create api method
 
+use JSON;
 use Moose;
 use Moose::Util::TypeConstraints;
 
-use MooseX::Types::Moose qw/Str Int ArrayRef/;
+use MooseX::Types::Moose qw/Str Int ArrayRef HashRef/;
 use MooseX::Types::URI qw/Uri/;
 
 extends 'Moose::Meta::Method';
@@ -18,15 +19,43 @@ subtype UriPath
 
 enum Method => qw(HEAD GET POST PUT DELETE);
 
+subtype 'JSON::XS::Boolean' => as 'JSON::XS::Boolean';
+subtype 'JSON::PP::Boolean' => as 'JSON::PP::Boolean';
+subtype 'Boolean'           => as 'Int' => where { $_ eq 1 || $_ eq 0 };
+
+coerce 'Boolean'
+    => from 'JSON::XS::Boolean'
+    => via {
+        if ( JSON::is_bool($_) && $_ == JSON::true ) {
+            return 1
+        }
+        return 0;
+    }
+    => from 'JSON::PP::Boolean'
+    => via {
+        if ( JSON::is_bool($_) && $_ == JSON::true ) {
+            return 1;
+        }
+        return 0;
+    }
+    => from 'Str'
+    => via {
+        if ($_ eq 'true') {
+            return 1;
+        }
+        return 0;
+    };
+
 has path   => ( is => 'ro', isa => 'UriPath', required => 1 );
 has method => ( is => 'ro', isa => 'Method',  required => 1 );
 has description => ( is => 'ro', isa => 'Str', predicate => 'has_description' );
 
 has authentication => (
     is        => 'ro',
-    isa       => 'Bool',
+    isa       => 'Boolean',
     predicate => 'has_authentication',
-    default   => 0
+    default   => 0,
+    coerce => 1,
 );
 has base_url => (
     is        => 'ro',
@@ -49,18 +78,38 @@ has expected => (
     handles    => { find_expected_code => 'grep', },
 );
 has params => (
-    traits     => ['Array'],
+    traits     => ['Hash'],
     is         => 'ro',
-    isa        => ArrayRef [Str],
+    isa        => HashRef [ArrayRef],
+    lazy => 1,
     default    => sub { [] },
     auto_deref => 1,
-    handles    => {find_request_parameter => 'first',}
+    predicate => 'has_params',
 );
-has required => (
-    traits     => ['Array'],
-    is         => 'ro',
-    isa        => ArrayRef [Str],
-    default    => sub { [] },
+has params_optional => (
+    traits  => ['Array'],
+    is      => 'ro',
+    isa     => ArrayRef [Str],
+    default => sub {
+        my $self = shift;
+        return [] unless $self->has_params;
+        my $opt = $self->params->{optional};
+        $opt ? return $opt : return [];
+    },
+    predicate => 'has_optional_params',
+    auto_deref => 1,
+);
+has params_required => (
+    traits  => ['Array'],
+    is      => 'ro',
+    isa     => ArrayRef [Str],
+    default => sub {
+        my $self = shift;
+        return [] unless $self->has_params;
+        my $req = $self->params->{required};
+        $req ? return $req : return [];
+    },
+    predicate => 'has_required_params',
     auto_deref => 1,
 );
 has documentation => (
@@ -75,10 +124,10 @@ has documentation => (
           if $self->has_description;
         $doc .= "method:      " . $self->method . "\n";
         $doc .= "path:        " . $self->path . "\n";
-        $doc .= "arguments:   " . join(', ', $self->params) . "\n"
-          if $self->params;
-        $doc .= "required:    " . join(', ', $self->required) . "\n"
-          if $self->required;
+        $doc .= "optional:    " . join(', ', $self->params_optional) . "\n"
+          if $self->has_optional_params;
+        $doc .= "required:    " . join(', ', $self->params_required) . "\n"
+          if $self->has_required_params;
         $doc;
     }
 );
@@ -96,7 +145,7 @@ sub wrap {
           ? delete $method_args{spore_payload}
           : delete $method_args{payload};
 
-        foreach my $required ( $method->required ) {
+        foreach my $required ( $method->params_required ) {
             if ( !grep { $required eq $_ } keys %method_args ) {
                 die Net::HTTP::Spore::Response->new(
                     599,
