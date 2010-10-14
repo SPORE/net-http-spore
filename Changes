@@ -1,2 +1,8 @@
+0.02 Thu 14 Oct 2010 02:08:27 PM CEST  
+    - add types for JSON booleans values
+    - params is now an hashref with 'optional' and 'required'
+    - update some tests
+    - updated couchdb.json spec for our tests
+
 0.01 Tue 14 Sep 2010 03:18:22 PM CEST  
     - initial release
