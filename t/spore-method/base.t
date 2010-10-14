@@ -31,7 +31,7 @@ ok $method = Net::HTTP::Spore::Meta::Method->wrap(
     package_name => 'test::api',
     method       => 'GET',
     path         => '/user/',
-    params       => [qw/name id street/],
+    params       => { optional => [qw/name id street/] },
     required     => [qw/name id/],
 );
 
