@@ -1,0 +1,24 @@
+{
+    "name": "Test API",
+    "methods" : {
+        "get_info" : {
+            "authentication": true,
+            "path" : "/show",
+            "method" : "GET",
+            "optional_params" : [
+                "user",
+                "border"
+            ]
+        },
+        "get_user_info" : {
+            "required_params" : [
+                "user"
+            ],
+            "optional_params" : [
+                "border"
+            ],
+            "path" : "/show",
+            "method" : "GET"
+        }
+    }
+}
