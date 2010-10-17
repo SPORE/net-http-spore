@@ -33,16 +33,16 @@ sub new_from_string {
         superclasses => ['Net::HTTP::Spore::Core'] );
 
     try {
-        my $api_base_url;
-        if ( $spec->{api_base_url} && !$args{api_base_url} ) {
-            $args{api_base_url} = $spec->{api_base_url};
+        my $base_url;
+        if ( $spec->{base_url} && !$args{base_url} ) {
+            $args{base_url} = $spec->{base_url};
         }
-        elsif ( !$args{api_base_url} ) {
-            die "api_base_url is missing!";
+        elsif ( !$args{base_url} ) {
+            die "base_url is missing!";
         }
 
-        if ( $spec->{api_format} ) {
-            $args{api_format} = $spec->{api_format};
+        if ( $spec->{formats} ) {
+            $args{formats} = $spec->{formats};
         }
 
         if ( $spec->{authentication} ) {
@@ -68,7 +68,7 @@ sub new_from_spec {
     my ( $content, $spec );
 
     if ( $spec_file =~ m!^http(s)?://! ) {
-        my $uri     = URI->new($spec_file);
+        my $uri = URI->new($spec_file);
         my $req = HTTP::Request->new(GET => $spec_file);
         my $ua  = LWP::UserAgent->new();
         my $res = $ua->request( $req );
@@ -100,8 +100,10 @@ sub _add_methods {
 
     my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
 
+    # for identica
+    my $client = Net::HTTP::Spore->new_from_spec('twitter.json', base_url => 'http://identi.ca/com/api');
+
     $client->enable('Format::JSON');
-    $client->enable('Auth::OAuth');
 
     my $timeline = $client->public_timeline(format => 'json');
     my $tweets = $timeline->body;

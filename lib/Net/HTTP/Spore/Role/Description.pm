@@ -5,23 +5,23 @@ package Net::HTTP::Spore::Role::Description;
 use Moose::Role;
 use MooseX::Types::URI qw/Uri/;
 
-has api_base_url => (
+has base_url => (
     is       => 'rw',
     isa      => Uri,
     coerce   => 1,
     required => 1,
 );
 
-has api_format => (
+has formats => (
     is        => 'rw',
     isa       => 'ArrayRef',
-    predicate => 'has_api_format',
+    predicate => 'has_formats',
 );
 
-has api_authentication => (
+has authentication => (
     is        => 'rw',
     isa       => 'Bool',
-    predicate => 'has_api_authentication',
+    predicate => 'has_authentication',
 );
 
 1;

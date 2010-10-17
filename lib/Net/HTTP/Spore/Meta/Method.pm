@@ -21,7 +21,7 @@ enum Method => qw(HEAD GET POST PUT DELETE);
 
 subtype 'JSON::XS::Boolean' => as 'JSON::XS::Boolean';
 subtype 'JSON::PP::Boolean' => as 'JSON::PP::Boolean';
-subtype 'Boolean'           => as 'Int' => where { $_ eq 1 || $_ eq 0 };
+subtype 'Boolean'           => as Int => where { $_ eq 1 || $_ eq 0 };
 
 coerce 'Boolean'
     => from 'JSON::XS::Boolean'
@@ -38,7 +38,7 @@ coerce 'Boolean'
         }
         return 0;
     }
-    => from 'Str'
+    => from Str
     => via {
         if ($_ eq 'true') {
             return 1;
@@ -63,52 +63,30 @@ has base_url => (
     coerce    => 1,
     predicate => 'has_base_url',
 );
-has format => (
+has formats => (
     is        => 'ro',
-    isa       => 'ArrayRef',
     isa       => ArrayRef [Str],
-    predicate => 'has_format',
+    predicate => 'has_formats',
 );
-has expected => (
+has expected_status => (
     traits     => ['Array'],
     is         => 'ro',
     isa        => ArrayRef [Int],
     auto_deref => 1,
-    predicate  => 'has_expected',
-    handles    => { find_expected_code => 'grep', },
+    predicate  => 'has_expected_status',
+    handles    => { find_expected_status => 'grep', },
 );
-has params => (
-    traits     => ['Hash'],
-    is         => 'ro',
-    isa        => HashRef [ArrayRef],
-    lazy => 1,
-    default    => sub { [] },
-    auto_deref => 1,
-    predicate => 'has_params',
-);
-has params_optional => (
+has optional_params => (
     traits  => ['Array'],
     is      => 'ro',
     isa     => ArrayRef [Str],
-    default => sub {
-        my $self = shift;
-        return [] unless $self->has_params;
-        my $opt = $self->params->{optional};
-        $opt ? return $opt : return [];
-    },
     predicate => 'has_optional_params',
     auto_deref => 1,
 );
-has params_required => (
+has required_params => (
     traits  => ['Array'],
     is      => 'ro',
     isa     => ArrayRef [Str],
-    default => sub {
-        my $self = shift;
-        return [] unless $self->has_params;
-        my $req = $self->params->{required};
-        $req ? return $req : return [];
-    },
     predicate => 'has_required_params',
     auto_deref => 1,
 );
@@ -124,9 +102,9 @@ has documentation => (
           if $self->has_description;
         $doc .= "method:      " . $self->method . "\n";
         $doc .= "path:        " . $self->path . "\n";
-        $doc .= "optional:    " . join(', ', $self->params_optional) . "\n"
+        $doc .= "optional params:    " . join(', ', $self->optional_params) . "\n"
           if $self->has_optional_params;
-        $doc .= "required:    " . join(', ', $self->params_required) . "\n"
+        $doc .= "required params:    " . join(', ', $self->required_params) . "\n"
           if $self->has_required_params;
         $doc;
     }
@@ -145,16 +123,18 @@ sub wrap {
           ? delete $method_args{spore_payload}
           : delete $method_args{payload};
 
-        foreach my $required ( $method->params_required ) {
-            if ( !grep { $required eq $_ } keys %method_args ) {
-                die Net::HTTP::Spore::Response->new(
-                    599,
-                    [],
-                    {
-                        error =>
-                          "$required is marked as required but is missing",
-                    }
-                );
+        if ($method->has_required_params) {
+            foreach my $required ( $method->required_params ) {
+                if ( !grep { $required eq $_ } keys %method_args ) {
+                    die Net::HTTP::Spore::Response->new(
+                        599,
+                        [],
+                        {
+                            error =>
+                                "$required is marked as required but is missing",
+                        }
+                    );
+                }
             }
         }
 
@@ -166,40 +146,40 @@ sub wrap {
         my $authentication =
           $method->has_authentication ? $method->authentication : $self->authentication;
 
-        my $format = $method->has_format ? $method->format : $self->api_format;
+        my $formats = $method->has_formats ? $method->formats : $self->formats;
 
-        my $api_base_url =
+        my $base_url =
             $method->has_base_url
           ? $method->base_url
-          : $self->api_base_url;
+          : $self->base_url;
 
         my $env = {
             REQUEST_METHOD => $method->method,
-            SERVER_NAME    => $api_base_url->host,
-            SERVER_PORT    => $api_base_url->port,
+            SERVER_NAME    => $base_url->host,
+            SERVER_PORT    => $base_url->port,
             SCRIPT_NAME    => (
-                $api_base_url->path eq '/'
+                $base_url->path eq '/'
                 ? ''
-                : $api_base_url->path
+                : $base_url->path
             ),
             PATH_INFO              => $method->path,
             REQUEST_URI            => '',
             QUERY_STRING           => '',
             HTTP_USER_AGENT        => $self->api_useragent->agent,
-            'spore.expected'       => [ $method->expected ],
+            'spore.expected_status'       => [ $method->expected_status ],
             'spore.authentication' => $authentication,
             'spore.params'         => $params,
             'spore.payload'        => $payload,
             'spore.errors'         => *STDERR,
-            'spore.url_scheme'     => $api_base_url->scheme,
-            'spore.format'         => $format,
+            'spore.url_scheme'     => $base_url->scheme,
+            'spore.formats'         => $formats,
         };
 
         my $response = $self->http_request($env);
         my $code = $response->status;
 
-        die $response if ( $method->has_expected
-            && !$method->find_expected_code( sub { /$code/ } ) );
+        die $response if ( $method->has_expected_status
+            && !$method->find_expected_status( sub { /$code/ } ) );
 
         $response;
     };
@@ -234,9 +214,9 @@ sub wrap {
 
 =item B<base_url>
 
-=item B<format>
+=item B<formats>
 
-=item B<expected>
+=item B<expected_status>
 
 =item B<params>
 
