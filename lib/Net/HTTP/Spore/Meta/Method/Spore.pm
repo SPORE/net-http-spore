@@ -3,7 +3,8 @@ package Net::HTTP::Spore::Meta::Method::Spore;
 # ABSTRACT: declare API method
 
 use Moose::Role;
-use Net::HTTP::API::Error;
+use Carp qw/confess/;
+
 use Net::HTTP::Spore::Meta::Method;
 use MooseX::Types::Moose qw/Str ArrayRef/;
 
@@ -44,8 +45,7 @@ sub remove_spore_method {
 before add_spore_method => sub {
     my ($meta, $name) = @_;
     if ($meta->_find_spore_method_by_name(sub {/^$name$/})) {
-        die Net::HTTP::API::Error->new(
-            reason => "method '$name' is already declared in " . $meta->name);
+        confess "method '$name' is already delcared in ".$meta->name;
     }
 };
 
@@ -72,9 +72,7 @@ after add_spore_method => sub {
         $name,
         sub {
             my $self = shift;
-            die Net::HTTP::API::Error->new(
-                reason => "'api_base_url' have not been defined")
-              unless $self->api_base_url;
+            die Net::HTTP::Spore::Response->new(599, [], {error => "'base_url' have not been defined"}) unless $self->base_url;
         }
     );
 };
