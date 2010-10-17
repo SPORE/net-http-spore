@@ -22,7 +22,7 @@ my $mock_server = {
 };
 
 my $api = {
-    api_base_url => 'http://services.org/api',
+    base_url => 'http://services.org/api',
     methods      => {
         'show' => {
             path   => '/show',

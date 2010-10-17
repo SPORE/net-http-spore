@@ -16,11 +16,11 @@ sub call { 1 }
 
 package main;
 
-my $couchdb_spec = 't/specs/couchdb.json';
-my %args = ( api_base_url => 'http://localhost:5984', );
-my $content < io($couchdb_spec);
+my $api_spec = 't/specs/api.json';
+my %args = ( base_url => 'http://localhost/', );
+my $content < io($api_spec);
 
-ok my $client = Net::HTTP::Spore->new_from_spec( $couchdb_spec, %args );
+ok my $client = Net::HTTP::Spore->new_from_spec( $api_spec, %args );
 
 is scalar @{$client->middlewares}, 0, 'no middleware';
 

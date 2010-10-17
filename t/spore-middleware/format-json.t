@@ -9,7 +9,7 @@ use Net::HTTP::Spore;
 my $content = { keys => [qw/1 2 3/] };
 
 my $mock_server = {
-    '/test_spore/_all_docs' => sub {
+    '/show' => sub {
         my $req = shift;
         $req->new_response(
             200,
@@ -20,13 +20,13 @@ my $mock_server = {
 };
 
 ok my $client =
-  Net::HTTP::Spore->new_from_spec( 't/specs/couchdb.json',
-    api_base_url => 'http://localhost:5984' );
+  Net::HTTP::Spore->new_from_spec( 't/specs/api.json',
+    base_url => 'http://localhost:5984' );
 
 $client->enable('Format::JSON');
 $client->enable('Mock', tests => $mock_server);
 
-my $res = $client->get_all_documents( database => 'test_spore' );
+my $res = $client->get_info();
 is $res->[0],        200;
 is_deeply $res->[2], $content;
 is $res->header('Content-Type'), 'application/json';

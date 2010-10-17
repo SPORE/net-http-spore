@@ -10,7 +10,7 @@ my $username = 'franck';
 my $password = 's3kr3t';
 
 my $mock_server = {
-    '/test_spore/_all_docs' => sub {
+    '/show' => sub {
         my $req  = shift;
         my $auth = $req->header('Authorization');
         if ($auth) {
@@ -41,14 +41,14 @@ plan tests => 3 * @tests;
 
 foreach my $test (@tests) {
     ok my $client = Net::HTTP::Spore->new_from_spec(
-        't/specs/couchdb.json', api_base_url => 'http://localhost:5984'
+        't/specs/api.json', base_url => 'http://localhost/'
       ),
       'client created';
     foreach ( @{ $test->{middlewares} } ) {
         $client->enable(@$_);
     }
 
-    my $res = $client->get_all_documents( database => 'test_spore' );
+    my $res = $client->get_info();
     is $res->[0], $test->{expected}->{status}, 'valid HTTP status';
     is $res->[2], $test->{expected}->{body},   'valid HTTP body';
 }
