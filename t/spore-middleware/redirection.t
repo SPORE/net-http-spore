@@ -18,10 +18,10 @@ SKIP: {
         : { "path" : "/home", "method" : "GET", "expected_status" : [200] } }
     }');
 
-    $client->enable(' Redirection ');
+    $client->enable('Redirection');
 
     my $r = $client->get_home();
     is $r->status, 200;
     is $r->request->uri,
-      'http://sites.google.com/site/fperrad/home ';
+      'http://sites.google.com/site/fperrad/home';
 }
