@@ -8,55 +8,44 @@ use IO::All;
 use JSON;
 use Carp;
 use Try::Tiny;
+use Scalar::Util;
 
 use Net::HTTP::Spore::Core;
 
 our $VERSION = 0.01;
 
+# XXX should we let the possibility to override this super class, or add
+# another superclasses?
+
 sub new_from_string {
     my ($class, $string, %args) = @_;
 
-    my $spec;
-
-    try {
-        $spec = JSON::decode_json($string);
-    }catch{
-        Carp::confess("unable to parse JSON spec: ".$_);
-    };
-
-    my ( $spore_class, $spore_object );
-    # XXX should we let the possibility to override this super class, or add
-    # another superclasses?
-
-    $spore_class =
+    my $spore_class =
       Class::MOP::Class->create_anon_class(
         superclasses => ['Net::HTTP::Spore::Core'] );
 
-    try {
-        my $base_url;
-        if ( $spec->{base_url} && !$args{base_url} ) {
-            $args{base_url} = $spec->{base_url};
-        }
-        elsif ( !$args{base_url} ) {
-            die "base_url is missing!";
-        }
+    my $spore_object = _attach_spec_to_class($string, \%args, $spore_class);
 
-        if ( $spec->{formats} ) {
-            $args{formats} = $spec->{formats};
-        }
+    return $spore_object;
+}
 
-        if ( $spec->{authentication} ) {
-            $args{authentication} = $spec->{authentication};
-        }
+sub new_from_strings {
+    my $class = shift;
 
-        $spore_object = $spore_class->new_object(%args);
-        $spore_object = _add_methods( $spore_object, $spec->{methods} );
-
+    my $opts;
+    if (ref ($_[-1]) eq 'HASH') {
+        $opts = pop @_;
     }
-    catch {
-        Carp::confess( "unable to create new Net::HTTP::Spore object: " . $_ );
-    };
+    my @strings = @_;
 
+    my $spore_class =
+      Class::MOP::Class->create_anon_class(
+        superclasses => ['Net::HTTP::Spore::Core'] );
+
+    my $spore_object = undef;
+    foreach my $string (@strings) {
+        $spore_object = _attach_spec_to_class($string, $opts, $spore_class, $spore_object);
+    }
     return $spore_object;
 }
 
@@ -65,13 +54,78 @@ sub new_from_spec {
 
     Carp::confess("specification file is missing") unless $spec_file;
 
-    my ( $content, $spec );
+    my $content = _read_spec($spec_file);
+
+    $class->new_from_string( $content, %args );
+}
+
+sub new_from_specs {
+    my $class = shift;
+
+    my $opts;
+    if (ref ($_[-1]) eq 'HASH') {
+        $opts = pop @_;
+    }
+    my @specs = @_;
+
+    my @strings;
+    foreach my $spec (@specs) {
+        push @strings,_read_spec($spec);
+    }
+
+    $class->new_from_strings(@strings, $opts);
+}
+
+sub _attach_spec_to_class {
+    my ( $string, $opts, $class, $object ) = @_;
+
+    my $spec;
+    try {
+        $spec = JSON::decode_json($string);
+    }
+    catch {
+        Carp::confess( "unable to parse JSON spec: " . $_ );
+    };
+
+    try {
+        my $base_url;
+        if ( $spec->{base_url} && !$opts->{base_url} ) {
+            $opts->{base_url} = $spec->{base_url};
+        }
+        elsif ( !$opts->{base_url} ) {
+            die "base_url is missing!";
+        }
+
+        if ( $spec->{formats} ) {
+            $opts->{formats} = $spec->{formats};
+        }
+
+        if ( $spec->{authentication} ) {
+            $opts->{authentication} = $spec->{authentication};
+        }
+
+        if ( !$object ) {
+            $object = $class->new_object(%$opts);
+        }
+        $object = _add_methods( $object, $spec->{methods} );
+    }
+    catch {
+        Carp::confess( "unable to create new Net::HTTP::Spore object: " . $_ );
+    };
+
+    return $object;
+}
+
+sub _read_spec {
+    my $spec_file = shift;
+
+    my $content;
 
     if ( $spec_file =~ m!^http(s)?://! ) {
         my $uri = URI->new($spec_file);
-        my $req = HTTP::Request->new(GET => $spec_file);
+        my $req = HTTP::Request->new( GET => $spec_file );
         my $ua  = LWP::UserAgent->new();
-        my $res = $ua->request( $req );
+        my $res = $ua->request($req);
         $content = $res->content;
     }
     else {
@@ -81,7 +135,7 @@ sub new_from_spec {
         $content < io($spec_file);
     }
 
-    $class->new_from_string( $content, %args );
+    return $content;
 }
 
 sub _add_methods {

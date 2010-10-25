@@ -1,0 +1,20 @@
+{
+    "name": "Test API",
+    "methods" : {
+        "get_projects" : {
+            "authentication": true,
+            "path" : "/projects/show",
+            "method" : "GET",
+            "optional_params" : [
+                "name"
+            ]
+        },
+        "get_project_info" : {
+            "required_params" : [
+                "project"
+            ],
+            "path" : "/project/show",
+            "method" : "GET"
+        }
+    }
+}
