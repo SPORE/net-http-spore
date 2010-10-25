@@ -50,12 +50,20 @@ has path   => ( is => 'ro', isa => 'UriPath', required => 1 );
 has method => ( is => 'ro', isa => 'Method',  required => 1 );
 has description => ( is => 'ro', isa => 'Str', predicate => 'has_description' );
 
+has required_payload => (
+    is        => 'ro',
+    isa       => 'Boolean',
+    predicate => 'payload_is_required',
+    lazy      => 1,
+    default   => 0,
+    coerce    => 1,
+);
 has authentication => (
     is        => 'ro',
     isa       => 'Boolean',
     predicate => 'has_authentication',
     default   => 0,
-    coerce => 1,
+    coerce    => 1,
 );
 has base_url => (
     is        => 'ro',
@@ -77,17 +85,24 @@ has expected_status => (
     handles    => { find_expected_status => 'grep', },
 );
 has optional_params => (
-    traits  => ['Array'],
-    is      => 'ro',
-    isa     => ArrayRef [Str],
-    predicate => 'has_optional_params',
+    traits     => ['Array'],
+    is         => 'ro',
+    isa        => ArrayRef [Str],
+    predicate  => 'has_optional_params',
     auto_deref => 1,
 );
 has required_params => (
-    traits  => ['Array'],
-    is      => 'ro',
-    isa     => ArrayRef [Str],
-    predicate => 'has_required_params',
+    traits     => ['Array'],
+    is         => 'ro',
+    isa        => ArrayRef [Str],
+    predicate  => 'has_required_params',
+    auto_deref => 1,
+);
+has form_data => (
+    traits     => ['Hash'],
+    is         => 'ro',
+    isa        => 'HashRef',
+    predicate  => 'has_form_data',
     auto_deref => 1,
 );
 has documentation => (
@@ -122,6 +137,24 @@ sub wrap {
           ( defined $method_args{spore_payload} )
           ? delete $method_args{spore_payload}
           : delete $method_args{payload};
+
+        if ( $payload
+            && ( $method->method ne 'POST' || $method->method ne 'PUT' ) )
+        {
+            die Net::HTTP::Spore::Response->new( 599, [],
+                { error => "payload requires a PUT or POST method" },
+            );
+        }
+
+        if ( $method->payload_is_required && !$payload ) {
+            die Net::HTTP::Spore::Response->new(
+                599,
+                [],
+                {
+                    error => "this method require a payload, and no payload is provided",
+                }
+            );
+        }
 
         if ($method->has_required_params) {
             foreach my $required ( $method->required_params ) {
