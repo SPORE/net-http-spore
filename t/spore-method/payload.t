@@ -1,7 +1,10 @@
 use strict;
 use warnings;
-use Test::More;
+use Test::More tests => 4;
 
+use Test::Exception;
+
+use JSON;
 use Net::HTTP::Spore;
 
 my $api_with_payload = {
@@ -10,8 +13,21 @@ my $api_with_payload = {
         create_user => {
             method           => 'POST',
             path             => '/user',
-            payload_required => 1,
+            required_payload => 1,
+        },
+        list_user => {
+            method => 'GET',
+            path   => '/user',
         }
-    }
+    },
 };
 
+my $obj =
+  Net::HTTP::Spore->new_from_string( JSON::encode_json($api_with_payload),
+    base_url => 'http://localhost' );
+
+dies_ok { $obj->create_user(); };
+like $@->body->{error}, qr/this method require a payload/;
+
+dies_ok { $obj->list_user( payload => {} ) };
+like $@->body->{error}, qr/payload requires a PUT or POST method/;
