@@ -24,4 +24,11 @@ has authentication => (
     predicate => 'has_authentication',
 );
 
+has expected_status => (
+    is      => 'rw',
+    isa     => 'Array',
+    lazy    => 1,
+    default => sub { [] },
+);
+
 1;
