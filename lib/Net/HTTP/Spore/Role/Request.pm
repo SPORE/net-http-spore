@@ -38,7 +38,10 @@ sub http_request {
         return $response;
     }
 
-    my $result = $self->request($request->finalize);
+    my $final = $request->finalize;
+    $self->_trace_msg("<- ".$request->method. " => ".$request->uri);
+
+    my $result = $self->request($final);
 
     $response = $request->new_response(
         $result->code,
@@ -46,6 +49,8 @@ sub http_request {
         $result->content,
     );
 
+    $self->_trace_msg("<- HTTP Status".$result->code );
+    
     map { $_->($response) } reverse @middlewares;
 
     $response;

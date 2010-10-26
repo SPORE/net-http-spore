@@ -4,7 +4,7 @@ package Net::HTTP::Spore::Meta::Class;
 
 use Moose::Role;
 
-with qw/Net::HTTP::Spore::Meta::Method::Spore/;
+with qw/Net::HTTP::Spore::Meta::Method::Spore Net::HTTP::Spore::Role::Debug/;
 
 1;
 

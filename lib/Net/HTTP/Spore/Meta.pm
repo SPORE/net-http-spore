@@ -36,6 +36,7 @@ sub init_meta {
         for   => $for,
         roles => [
             qw/
+              Net::HTTP::Spore::Role::Debug
               Net::HTTP::Spore::Role::Description
               Net::HTTP::Spore::Role::UserAgent
               Net::HTTP::Spore::Role::Request
