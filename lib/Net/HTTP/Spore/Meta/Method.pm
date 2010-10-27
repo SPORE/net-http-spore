@@ -139,7 +139,7 @@ sub wrap {
           : delete $method_args{payload};
 
         if ( $payload
-            && ( $method->method ne 'POST' || $method->method ne 'PUT' ) )
+            && ( $method->method !~ /^P(?:OS|U)T$/i ) )
         {
             die Net::HTTP::Spore::Response->new( 599, [],
                 { error => "payload requires a PUT or POST method" },
