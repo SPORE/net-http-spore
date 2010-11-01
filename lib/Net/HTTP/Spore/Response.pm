@@ -5,7 +5,7 @@ package Net::HTTP::Spore::Response;
 use strict;
 use warnings;
 
-use overload '@{}' => \&finalize;
+use overload '@{}' => \&finalize, fallback => 1;
 
 use HTTP::Headers;
 
