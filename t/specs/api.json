@@ -19,6 +19,23 @@
             ],
             "path" : "/show",
             "method" : "GET"
+        },
+      "add_email" : {
+        "path" : "/email",
+        "method" : "POST",
+        "form-data" : {
+          "email" : ":email"
+        },
+        "required_params" : [
+          "email"
+        ]
+      },
+      "attach_file" : {
+        "path":"/file",
+        "method":"POST",
+        "headers": {
+          "content-type":":content_type"
         }
+      }
     }
 }
