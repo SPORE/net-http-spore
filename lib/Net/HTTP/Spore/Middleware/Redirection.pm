@@ -28,8 +28,10 @@ sub call {
                   )
                 {
                     my $uri = URI->new($location);
-                    $req->env->{HTTP_HOST} = $uri->host;
-                    $req->env->{PATH_INFO} = $uri->path;
+                    $req->env->{HTTP_HOST}   = $uri->host;
+                    $req->env->{PATH_INFO}   = $uri->path;
+                    $req->env->{SERVER_PORT} = $uri->port;
+                    $req->env->{SERVER_NAME} = $uri->host;
                     $res = $self->_request($req);
                     $nredirect++;
                 }else{
