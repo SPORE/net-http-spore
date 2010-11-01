@@ -33,27 +33,41 @@ sub http_request {
         }
     }
 
-    if (defined $response) {
-        map { $_->($response) } reverse @middlewares;
-        return $response;
+    return
+      $self->_execute_middlewares_on_response( $response, @middlewares )
+      if defined $response;
+
+    $response = $self->_request($request);
+
+    return $self->_execute_middlewares_on_response( $response, @middlewares );
+}
+
+sub _execute_middlewares_on_response {
+    my ($self, $response, @middlewares) = @_;
+
+    foreach my $mw ( reverse @middlewares ) {
+        my $res = $mw->($response);
+        $response = $res
+          if ( defined $res
+            && Scalar::Util::blessed($res)
+            && $res->isa('Net::HTTP::Spore::Response') );
     }
 
-    my $final = $request->finalize;
-    $self->_trace_msg("<- ".$request->method. " => ".$request->uri);
+    $response;
+}
 
-    my $result = $self->request($final);
+sub _request {
+    my ($self, $request) = @_;
 
-    $response = $request->new_response(
+    my $result = $self->request($request->finalize);
+
+    my $response = $request->new_response(
         $result->code,
         $result->headers,
         $result->content,
     );
 
-    $self->_trace_msg("<- HTTP Status".$result->code );
-    
-    map { $_->($response) } reverse @middlewares;
-
-    $response;
+    return $response;
 }
 
 1;

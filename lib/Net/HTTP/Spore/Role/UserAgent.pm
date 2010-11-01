@@ -15,6 +15,7 @@ has api_useragent => (
         my $ua = LWP::UserAgent->new();
         $ua->agent( "Net::HTTP::Spore v" . $Net::HTTP::Spore::VERSION . " (Perl)" );
         $ua->env_proxy;
+        $ua->max_redirect(0);
         return $ua;
     }
 );

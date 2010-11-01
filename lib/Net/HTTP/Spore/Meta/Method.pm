@@ -76,6 +76,11 @@ has formats => (
     isa       => ArrayRef [Str],
     predicate => 'has_formats',
 );
+has headers => (
+    is        => 'ro',
+    isa       => HashRef [Str],
+    predicate => 'has_headers',
+);
 has expected_status => (
     traits     => ['Array'],
     is         => 'ro',
