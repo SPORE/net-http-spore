@@ -44,6 +44,9 @@ sub call {
 =head1 SYNOPSIS
 
     my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
+
+    $client->enable('Format::JSON');
+
     $client->enable(
         'Auth::OAuth',
         consumer_key    => 'xxx',
@@ -51,6 +54,10 @@ sub call {
         token           => '123',
         token_secret    => '456'
     );
+
+    print $client->friends_timeline(
+      format => 'json'
+    )->body->[0]->{text};
 
 =head1 DESCRIPTION
 
