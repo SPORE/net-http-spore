@@ -2,44 +2,179 @@ package Net::HTTP::Spore::Request;
 
 # ABSTRACT: Net::HTTP::Spore::Request - Portable HTTP request object from SPORE env hash
 
-use strict;
-use warnings;
-
+use Moose;
 use Carp ();
 use URI;
 use HTTP::Headers;
 use HTTP::Request;
 use URI::Escape;
-use Hash::MultiValue;
-
+use MIME::Base64;
 use Net::HTTP::Spore::Response;
 
-sub new {
-    my ( $class, $env ) = @_;
+has env => (
+    is       => 'rw',
+    isa      => 'HashRef',
+    required => 1,
+    traits   => ['Hash'],
+    handles  => {
+        set_to_env   => 'set',
+        get_from_env => 'get',
+    }
+);
 
-    Carp::croak('$env is required') unless defined $env && ref($env) eq 'HASH';
-    bless { env => $env }, $class;
+has path => (
+    is      => 'rw',
+    isa     => 'Str',
+    lazy    => 1,
+    default => sub { $_[0]->path_info }
+);
+
+has headers => (
+    is      => 'rw',
+    isa     => 'HTTP::Headers',
+    lazy    => 1,
+    handles => {
+        header => 'header',
+    },
+    default => sub {
+        my $self = shift;
+        my $env  = $self->env;
+        my $h    = HTTP::Headers->new(
+            map {
+                ( my $field = $_ ) =~ s/^HTTPS?_//;
+                ( $field => $env->{$_} );
+              } grep { /^(?:HTTP|CONTENT)/i } keys %$env
+        );
+        return $h;
+    },
+);
+
+sub BUILDARGS {
+    my $class = shift;
+
+    if (@_ == 1 && !exists $_[0]->{env}) {
+        return {env => $_[0]};
+    }
+    return @_;
 }
 
-sub env         { $_[0]->{env} }
-sub method      { $_[0]->{env}->{REQUEST_METHOD} }
-sub port        { $_[0]->{env}->{SERVER_PORT} }
-sub script_name { $_[0]->{env}->{SCRIPT_NAME} }
-sub path        { $_[0]->path_info }
-sub request_uri { $_[0]->{env}->{REQUEST_URI} }
-sub scheme      { $_[0]->{env}->{'spore.scheme'} }
-sub logger      { $_[0]->{env}->{'sporex.logger'} }
-sub secure      { $_[0]->scheme eq 'https' }
-sub content     { $_[0]->{env}->{'spore.payload'} }
-sub body        { $_[0]->{env}->{'spore.payload'} }
-sub input       { $_[0]->{env}->{'spore.payload'} }
+sub method {
+    my ( $self, $value ) = @_;
+    if ($value) {
+        $self->set_to_env( 'REQUEST_METHOD', $value );
+    }
+    else {
+        return $self->get_from_env('REQUEST_METHOD');
+    }
+}
 
+sub port {
+    my ( $self, $value ) = @_;
+    if ($value) {
+        $self->set_to_env( 'SERVER_PORT', $value );
+    }
+    else {
+        return $self->get_from_env('SERVER_PORT');
+    }
+}
+
+sub script_name {
+    my ( $self, $value ) = @_;
+    if ($value) {
+        $self->set_to_env( 'SCRIPT_NAME', $value );
+    }
+    else {
+        return $self->get_from_env('SCRIPT_NAME');
+    }
+}
+
+sub request_uri {
+    my ($self, $value) = @_;
+    if ($value) {
+        $self->set_to_env( 'REQUEST_URI', $value );
+    }
+    else {
+        return $self->get_from_env('REQUEST_URI');
+    }    
+}
+
+sub scheme {
+    my ($self, $value) = @_;
+    if ($value) {
+        $self->set_to_env( 'spore.scheme', $value );
+    }
+    else {
+        return $self->get_from_env('spore.scheme');
+    }    
+}
+
+sub logger {
+    my ($self, $value) = @_;
+    if ($value) {
+        $self->set_to_env( 'sporex.logger', $value );
+    }
+    else {
+        return $self->get_from_env('sporex.logger');
+    }
+}
+
+sub body {
+    my ($self, $value) = @_;
+    if ($value) {
+        $self->set_to_env( 'spore.payload', $value );
+    }
+    else {
+        return $self->get_from_env('spore.payload');
+    }
+}
+
+sub input   { (shift)->body(@_) }
+sub content { (shift)->body(@_) }
+sub secure  { $_[0]->scheme eq 'https' }
+
+# stolen from HTTP::Request::Common
+sub _boundary {
+    my ( $self, $size ) = @_;
+
+    return "xYzZy" unless $size;
+
+    my $b =
+      MIME::Base64::encode( join( "", map chr( rand(256) ), 1 .. $size * 3 ),
+        "" );
+    $b =~ s/[\W]/X/g;
+    return $b;
+}
+
+sub _form_data {
+    my ( $self, $data ) = @_;
+
+    my $form_data;
+    foreach my $k ( keys %$data ) {
+        push @$form_data,
+            'Content-Disposition: form-data; name="' 
+          . $k
+          . '"'."\r\n\r\n"
+          . $data->{$k};
+    }
+
+    my $b = $self->_boundary(10);
+    my $t = [];
+    foreach (@$form_data) {
+        push @$t, '--', $b, "\r\n", $_, "\r\n";
+    }
+    push @$t, '--', $b, , '--', "\r\n";
+    my $content = join("", @$t);
+    return ($content, $b);
+}
+
+# TODO
 sub path_info {
     my $self = shift;
     my ($path) = $self->_path;
     $path;
 }
 
+# TODO
 sub _path {
     my $self = shift;
 
@@ -65,28 +200,14 @@ sub _path {
     return ( $path, $query_string );
 }
 
+# TODO
 sub query_string {
     my $self = shift;
     my ( undef, $query_string ) = $self->_path;
     $query_string;
 }
 
-sub headers {
-    my $self = shift;
-    if ( !defined $self->{headers} ) {
-        my $env = $self->env;
-        $self->{headers} = HTTP::Headers->new(
-            map {
-                ( my $field = $_ ) =~ s/^HTTPS?_//;
-                ( $field => $env->{$_} );
-              } grep { /^(?:HTTP|CONTENT)/i } keys %$env
-        );
-    }
-    $self->{headers};
-}
-
-sub header {shift->headers->header(@_)}
-
+# TODO
 sub uri {
     my $self = shift;
 
@@ -113,16 +234,18 @@ sub uri {
     return URI->new( $base . $path )->canonical;
 }
 
-# retourner les query parameters ? vu qu'on a pas encore peuple l'url, on gere comment ?
+# TODO retourner les query parameters ? vu qu'on a pas encore peuple l'url, on gere comment ?
 sub query_parameters {
     my $self = shift;
 }
 
+# TODO
 sub base {
     my $self = shift;
     URI->new( $self->_uri_base )->canonical;
 }
 
+# TODO
 sub _uri_base {
     my $self = shift;
     my $env  = $self->env;
@@ -147,18 +270,75 @@ sub new_response {
 sub finalize {
     my $self = shift;
 
-    my ($path_info, $query_string) = $self->_path;
+    my $path_info = $self->env->{PATH_INFO};
 
-    $self->env->{PATH_INFO} = $path_info;
-    $self->env->{QUERY_STRING} = $query_string || '';
+    my $form_data = $self->env->{'spore.form_data'};
+    my $headers   = $self->env->{'spore.headers'};
+    my $params    = $self->env->{'spore.params'} || [];
+
+    my $query = [];
+    my $form  = {};
+
+    for ( my $i = 0 ; $i < scalar @$params ; $i++ ) {
+        my $k = $params->[$i];
+        my $v = $params->[++$i];
+        my $modified = 0;
+
+        if ($path_info =~ s/\:$k/$v/) {
+            $modified++;
+        }
+        
+        foreach my $f_k (keys %$form_data) {
+            my $f_v = $form_data->{$f_k};
+            if ($f_v =~ s/^\:$k/$v/) {
+                $form->{$f_k} = $f_v;
+                $modified++;
+            }
+        }
+
+        foreach my $h_k (keys %$headers) {
+            my $h_v = $headers->{$h_k};
+            if ($h_v =~ s/^\:$k/$v/) {
+                $self->header($h_k => $h_v);
+                $modified++;
+            }
+        }
+
+        if ($modified == 0) {
+            push @$query, $k.'='.$v;
+        }
+    }
+
+    my $query_string;
+    if (scalar @$query) {
+        $query_string = join('&', @$query);
+    }
+
+    $self->env->{PATH_INFO}    = $path_info;
+    $self->env->{QUERY_STRING} = $query_string;
 
     my $uri = $self->uri($path_info, $query_string || '');
+    
+    my $request = HTTP::Request->new(
+        $self->method => $uri, $self->headers
+    );
 
-    my $request =
-      HTTP::Request->new( $self->method => $uri, $self->headers );
+    if ( keys %$form_data ) {
+        $self->env->{'spore.form_data'} = $form;
+        my ( $content, $b ) = $self->_form_data($form);
+        $request->content($content);
+        $request->header('Content-Length' => length($content));
+        $request->header(
+            'Content-Type' => 'multipart/form-data; boundary=' . $b );
+    }
 
-    $request->content($self->content) if ($self->content);
-    $request;
+    if ( my $payload = $self->content ) {
+        $request->content($payload);
+        $request->header(
+            'Content-Type' => 'application/x-www-form-urlencoded' );
+    }
+
+    return $request;
 }
 
 1;
