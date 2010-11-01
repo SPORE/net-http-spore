@@ -200,18 +200,23 @@ sub wrap {
                 ? ''
                 : $base_url->path
             ),
-            PATH_INFO              => $method->path,
-            REQUEST_URI            => '',
-            QUERY_STRING           => '',
-            HTTP_USER_AGENT        => $self->api_useragent->agent,
-            'spore.expected_status'       => [ $method->expected_status ],
-            'spore.authentication' => $authentication,
-            'spore.params'         => $params,
-            'spore.payload'        => $payload,
-            'spore.errors'         => *STDERR,
-            'spore.url_scheme'     => $base_url->scheme,
+            PATH_INFO               => $method->path,
+            REQUEST_URI             => '',
+            QUERY_STRING            => '',
+            HTTP_USER_AGENT         => $self->api_useragent->agent,
+            'spore.expected_status' => [ $method->expected_status ],
+            'spore.authentication'  => $authentication,
+            'spore.params'          => $params,
+            'spore.payload'         => $payload,
+            'spore.errors'          => *STDERR,
+            'spore.url_scheme'      => $base_url->scheme,
             'spore.formats'         => $formats,
         };
+
+        $env->{'spore.form_data'} = $method->form_data
+          if $method->has_form_data;
+
+        $env->{'spore.headers'} = $method->headers if $method->has_headers;
 
         my $response = $self->http_request($env);
         my $code = $response->status;
@@ -222,6 +227,10 @@ sub wrap {
         $response;
     };
     $args{body} = $code;
+
+    if ($args{'form-data'}){
+        $args{'form_data'} = delete $args{'form-data'};
+    }
 
     $class->SUPER::wrap(%args);
 }
