@@ -92,6 +92,16 @@ my @tests = (
         },
         uri        => 'http://example.com/foo%20bar/baz%20quux',
         parameters => {}
+    },
+    {
+        add_env => {
+            HTTP_HOST      => 'example.com',
+            SCRIPT_NAME    => '',
+            PATH_INFO      => '/:foo/:bar/:baz',
+            'spore.params' => [qw/foo foo bar bar/]
+        },
+        uri        => 'http://example.com/foo/bar/',
+        parameters => { foo => 'foo', bar => 'bar' },
     }
 );
 
@@ -102,7 +112,7 @@ for my $block (@tests) {
     while ( my ( $key, $val ) = each %{ $block->{add_env} || {} } ) {
         $env->{$key} = $val;
     }
-    my $req = Net::HTTP::Spore::Request->new($env);
+    my $req = Net::HTTP::Spore::Request->new($env)->finalize;
 
     is $req->uri,                     $block->{uri};
 #    is_deeply $req->query_parameters, $block->{parameters};
