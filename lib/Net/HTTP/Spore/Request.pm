@@ -226,7 +226,7 @@ sub uri {
 
     my $path = URI::Escape::uri_escape($path_info || '', $path_escape_class);
 
-    if (defined $query_string) {
+    if (defined $query_string && length($query_string) > 0) {
         $path .= '?' . $query_string;
     }
 
@@ -284,7 +284,7 @@ sub finalize {
         my $v = $params->[++$i];
         my $modified = 0;
 
-        if ($path_info =~ s/\:$k/$v/) {
+        if ($path_info && $path_info =~ s/\:$k/$v/) {
             $modified++;
         }
         
@@ -305,9 +305,16 @@ sub finalize {
         }
 
         if ($modified == 0) {
-            push @$query, $k.'='.$v;
+            if (defined $v) {
+                push @$query, $k.'='.$v;
+            }else{
+                push @$query, $k;
+            }
         }
     }
+
+    # clean remaining :name in url
+    $path_info =~ s/:\w+//g if $path_info;
 
     my $query_string;
     if (scalar @$query) {
