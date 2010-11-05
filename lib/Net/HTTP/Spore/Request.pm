@@ -128,9 +128,78 @@ sub body {
     }
 }
 
+sub base {
+    my $self = shift;
+    URI->new( $self->_uri_base )->canonical;
+}
+
 sub input   { (shift)->body(@_) }
 sub content { (shift)->body(@_) }
 sub secure  { $_[0]->scheme eq 'https' }
+
+# TODO
+# need to refactor this method, with path_info and query_string construction
+sub uri {
+    my ($self, $path_info, $query_string) = @_;
+
+    if ( !defined $path_info || !defined $query_string ) {
+        my @path_info = $self->_path;
+        $path_info    = $path_info[0] if !$path_info;
+        $query_string = $path_info[1] if !$query_string;
+    }
+
+    my $base = $self->_uri_base;
+
+    my $path_escape_class = '^A-Za-z0-9\-\._~/';
+
+    my $path = URI::Escape::uri_escape($path_info || '', $path_escape_class);
+
+    if (defined $query_string && length($query_string) > 0) {
+        $path .= '?' . $query_string;
+    }
+
+    $base =~ s!/$!! if $path =~ m!^/!;
+    return URI->new( $base . $path )->canonical;
+}
+
+sub _path {
+    my $self = shift;
+
+    my $query_string;
+    my $path = $self->env->{PATH_INFO};
+    my @params = @{ $self->env->{'spore.params'} || [] };
+
+    my $j = 0;
+    for (my $i = 0; $i < scalar @params; $i++) {
+        my $key = $params[$i];
+        my $value = $params[++$i];
+        if (!$value) {
+            $query_string .= $key;
+            last;
+        }
+        unless ( $path && $path =~ s/\:$key/$value/ ) {
+            $query_string .= $key . '=' . $value;
+            $query_string .= '&' if $query_string && scalar @params;
+        }
+    }
+
+    $query_string =~ s/&$// if $query_string;
+    return ( $path, $query_string );
+}
+
+sub _uri_base {
+    my $self = shift;
+    my $env  = $self->env;
+
+    my $uri =
+      ( $env->{'spore.url_scheme'} || "http" ) . "://"
+      . (
+        $env->{HTTP_HOST}
+          || (( $env->{SERVER_NAME} || "" ) . ":"
+            . ( $env->{SERVER_PORT} || 80 ) )
+      ) . ( $env->{SCRIPT_NAME} || '/' );
+    return $uri;
+}
 
 # stolen from HTTP::Request::Common
 sub _boundary {
@@ -165,99 +234,6 @@ sub _form_data {
     push @$t, '--', $b, , '--', "\r\n";
     my $content = join("", @$t);
     return ($content, $b);
-}
-
-# TODO
-sub path_info {
-    my $self = shift;
-    my ($path) = $self->_path;
-    $path;
-}
-
-# TODO
-sub _path {
-    my $self = shift;
-
-    my $query_string;
-    my $path = $self->env->{PATH_INFO};
-    my @params = @{ $self->env->{'spore.params'} || [] };
-
-    my $j = 0;
-    for (my $i = 0; $i < scalar @params; $i++) {
-        my $key = $params[$i];
-        my $value = $params[++$i];
-        if (!$value) {
-            $query_string .= $key;
-            last;
-        }
-        unless ( $path && $path =~ s/\:$key/$value/ ) {
-            $query_string .= $key . '=' . $value;
-            $query_string .= '&' if $query_string && scalar @params;
-        }
-    }
-
-    $query_string =~ s/&$// if $query_string;
-    return ( $path, $query_string );
-}
-
-# TODO
-sub query_string {
-    my $self = shift;
-    my ( undef, $query_string ) = $self->_path;
-    $query_string;
-}
-
-# TODO
-sub uri {
-    my $self = shift;
-
-    my $path_info    = shift;
-    my $query_string = shift;
-
-    if ( !defined $path_info || !defined $query_string ) {
-        my @path_info = $self->_path;
-        $path_info    = $path_info[0] if !$path_info;
-        $query_string = $path_info[1] if !$query_string;
-    }
-
-    my $base = $self->_uri_base;
-
-    my $path_escape_class = '^A-Za-z0-9\-\._~/';
-
-    my $path = URI::Escape::uri_escape($path_info || '', $path_escape_class);
-
-    if (defined $query_string && length($query_string) > 0) {
-        $path .= '?' . $query_string;
-    }
-
-    $base =~ s!/$!! if $path =~ m!^/!;
-    return URI->new( $base . $path )->canonical;
-}
-
-# TODO retourner les query parameters ? vu qu'on a pas encore peuple l'url, on gere comment ?
-sub query_parameters {
-    my $self = shift;
-}
-
-# TODO
-sub base {
-    my $self = shift;
-    URI->new( $self->_uri_base )->canonical;
-}
-
-# TODO
-sub _uri_base {
-    my $self = shift;
-    my $env  = $self->env;
-
-    my $uri =
-      ( $env->{'spore.url_scheme'} || "http" ) . "://"
-      . (
-        $env->{HTTP_HOST}
-          || (( $env->{SERVER_NAME} || "" ) . ":"
-            . ( $env->{SERVER_PORT} || 80 ) )
-      ) . ( $env->{SCRIPT_NAME} || '/' );
-    return $uri;
 }
 
 sub new_response {
