@@ -10,8 +10,9 @@ has tests => ( isa => 'HashRef', is => 'ro', required => 1 );
 sub call {
     my ( $self, $req ) = @_;
 
+    my $finalized_request = $req->finalize;
     foreach my $r ( keys %{ $self->tests } ) {
-        next unless $r eq $req->path;
+        next unless $r eq $finalized_request->uri->path;
         my $res = $self->tests->{$r}->($req);
         return $res if defined $res;
     }
