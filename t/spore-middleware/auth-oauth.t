@@ -5,7 +5,7 @@ use Test::More;
 
 plan tests => 3;
 
-use NET::HTTP::Spore;
+use Net::HTTP::Spore;
 use JSON;
 
 my $api = {
