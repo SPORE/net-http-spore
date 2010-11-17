@@ -46,11 +46,19 @@ sub _execute_middlewares_on_response {
     my ($self, $response, @middlewares) = @_;
 
     foreach my $mw ( reverse @middlewares ) {
-        my $res = $mw->($response);
+        my ($res, $error);
+        try {
+            $res = $mw->($response);
+        }catch{
+            $error = 1;
+            $response->code(599);
+            $response->body({error => $_, body=>$response->body});
+        };
         $response = $res
           if ( defined $res
             && Scalar::Util::blessed($res)
             && $res->isa('Net::HTTP::Spore::Response') );
+        last if $error;
     }
 
     $response;
