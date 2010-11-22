@@ -12,7 +12,7 @@ use Scalar::Util;
 
 use Net::HTTP::Spore::Core;
 
-our $VERSION = 0.01;
+our $VERSION = 0.03;
 
 # XXX should we let the possibility to override this super class, or add
 # another superclasses?

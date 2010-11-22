@@ -54,7 +54,7 @@ sub add_spore_method {
 
     my $code = delete $options{code};
 
-#    $meta->_trace_msg( '-> attach ' 
+#    $meta->_trace_msg( '-> attach '
 #          . $name . ' ('
 #          . $options{method} . ' => '
 #          . $options{path}

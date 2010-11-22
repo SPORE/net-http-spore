@@ -1,5 +1,7 @@
-0.03 
-
+0.03 Mon 22 Nov 2010 03:01:35 PM CET
+    - add form-data and headers
+    - add tests
+    - don't depends on Net::HTTP::API anymore
     - remove 'path_info' method from N::H::S::Request object
     - remove 'query_string' method from N::H::S::Request object
 

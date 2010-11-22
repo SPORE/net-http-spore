@@ -95,7 +95,7 @@ sub request_uri {
     }
     else {
         return $self->get_from_env('REQUEST_URI');
-    }    
+    }
 }
 
 sub scheme {
@@ -105,7 +105,7 @@ sub scheme {
     }
     else {
         return $self->get_from_env('spore.scheme');
-    }    
+    }
 }
 
 sub logger {
@@ -220,7 +220,7 @@ sub _form_data {
     my $form_data;
     foreach my $k ( keys %$data ) {
         push @$form_data,
-            'Content-Disposition: form-data; name="' 
+            'Content-Disposition: form-data; name="'
           . $k
           . '"'."\r\n\r\n"
           . $data->{$k};
@@ -263,7 +263,7 @@ sub finalize {
         if ($path_info && $path_info =~ s/\:$k/$v/) {
             $modified++;
         }
-        
+
         foreach my $f_k (keys %$form_data) {
             my $f_v = $form_data->{$f_k};
             if ($f_v =~ s/^\:$k/$v/) {
@@ -301,7 +301,7 @@ sub finalize {
     $self->env->{QUERY_STRING} = $query_string;
 
     my $uri = $self->uri($path_info, $query_string || '');
-    
+
     my $request = HTTP::Request->new(
         $self->method => $uri, $self->headers
     );
