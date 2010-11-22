@@ -49,15 +49,15 @@ I've noted the obvious cases (lists) but the others also need changing to add do
 
 This part describes the API itself:
 
-=head3 B<name> (optional)
+=head3 name
 
-A simple name to describe the specification
+An optional simple name to describe the specification
 
     "name" : "CouchDB"
 
-=head3 B<author> (optional)
+=head3 author
 
-A list of authors for this specification
+An optional list of authors for this specification
 
     "author" : [
       "franck cuny <franck@lumberjaph.net>"
@@ -65,17 +65,17 @@ A list of authors for this specification
 
 XXX should be renamed to be plural?
 
-=head3 B<api_base_url> (optional)
+=head3 api_base_url
 
-If the API has a fixed URL
+An optional base fixed URL for this API
 
     "api_base_url" : "http://api.twitter.com/1"
 
 Should not including a trailing slash.
 
-=head3 B<api_format> (optional)
+=head3 api_format
 
-A list of supported formats
+An optional list of supported formats
 
     "api_format" : [
       "json"
@@ -84,55 +84,63 @@ A list of supported formats
 
 XXX what does "supported format" actually mean? What's the effect?
 
-=head3 B<version> (optional)
+=head3 version
 
-The version number of the current description, expressed as a string
+An optional version number for the current description, expressed as a string
 
     "version" : "0.1"
 
 XXX Any semantics or just for documentation?
 
-=head3 B<authentication> (optional)
+=head3 authentication
 
-A boolean to specify if this API requires authentication for all the methods
+An optional boolean to specify if this API requires authentication for all the methods
 
     "authentication" : 1
 
-=head3 B<methods> (required)
+The default is false.
 
-Specifies the methods to be defined.
+=head3 methods
+
+A mandatory hash of method descriptions.
+See L</METHOD DESCRIPTION>.
 
     "methods" : { ... }
 
-See L</METHOD DESCRIPTION>.
-
-The desciption B<MUST> contain a list of at least one method
+The C<methods> hash B<MUST> contain at least one method.
 
 =head2 METHOD DESCRIPTION
 
-A method must have a name, which is the key in the C<methods> hash described above:
+A method must have a name, which is the key in the L</methods> hash
 
-    "public_timeline" : { ... }
+    "methods" : {
+        "public_timeline" : { ... }
+    }
 
-=head3 B<method> (required)
+=head3 method
 
-An HTTP method
+The mandatory C<method> attribute specifies the HTTP method to use for this call
 
     "method" : "GET"
 
-=head3 B<path> (required)
+=head3 path
 
-Path for the given method. The path can contain I<placeholders>. A placeholder
+The mandatory C<path> attribute specifies the URI path for this method.
+
+    "path" : "/login"
+
+The path can contain I<placeholders>. A placeholder
 B<MUST> begin with a <:>:
 
     "path" : "/statuses/public_timeline.:format"
 
 XXX How can non-placeholder :foo's be included in the path? ie is there an escape mechanism?
-What happens in this example if 'format' isn't listed in params?
+XXX What happens in this example if 'format' isn't listed in params/required?
+XXX What happens if a parameter needs to be followed by a word character? ie can something like :{format}foo be used?
 
-=head3 B<params> (optional)
+=head3 params
 
-A list of I<optional> parameters (contrast with C<required>).
+An optional list of I<optional> parameters (contrast with L</required>).
 This list will be used to replace value in placeholders,
 and if not used in the path, will be added to the query.
 
@@ -141,9 +149,9 @@ and if not used in the path, will be added to the query.
       "include_entities"
     ]
 
-=head3 B<required> (optional)
+=head3 required
 
-A list of I<required> parameters (contrast with C<params>).
+An optional list of I<required> parameters (contrast with L</params>).
 This list will be used to replace value in placeholders,
 and if not used in the path, will be added to the query.
 
@@ -153,9 +161,9 @@ Parameters that are required B<MUST NOT> be repeated in the B<params> field
       "format"
     ]
 
-=head3 B<expected> (optional)
+=head3 expected
 
-A list of accepted HTTP status for this method
+An optional list of valid HTTP response status values for this method
 
     "expected" : [
       200,
@@ -164,22 +172,24 @@ A list of accepted HTTP status for this method
 
 An exception will be thrown if some other status is returned.
 
-=head3 B<description> (optional)
+=head3 description
 
-A simple description for the method. This should not be considered as
+An optional simple description for the method. This should not be considered as
 documentation.
 
     "description" : "Returns the 20 most recent statuses, including retweets if they exist, from non-protected users"
 
-=head3 B<authentication> (optional)
+=head3 authentication
 
-A boolean to specify if this method requires authentication
+An optional boolean to specify if this method requires authentication
 
     "authentication" : 0
 
-=head3 B<base_url> (optional)
+The default is false.
 
-Specify an url for this method, if different to C<api_base_url>
+=head3 base_url
+
+An optional base url for this method, if different to L</api_base_url>
 
     "base_url" : "http://api.twitter.com/1"
 
@@ -187,18 +197,18 @@ Should not including a trailing slash.
 
 XXX would be nice to be able to express this as a relative url (relative to api_base_url) That could be handled at build time.
 
-=head3 B<format> (optional)
+=head3 format
 
-A list of supported formats for this method, if different to C<api_format>:
+An optional list of supported formats for this method, if different to L</api_format>:
 
     "format" : [
       "json",
       "xml"
     ]
 
-=head3 B<documentation> (optional)
+=head3 documentation
 
-A complete documentation for the given method
+Optional complete documentation text for the method
 
     "documentation" : "The public timeline is cached for 60 seconds. Requesting more frequently than that will not return any more data, and will count against your rate limit usage."
 
