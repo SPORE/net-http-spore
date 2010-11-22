@@ -49,15 +49,13 @@ I've noted the obvious cases (lists) but the others also need changing to add do
 
 This part describes the API itself:
 
-=over 4
-
-=item B<name> (optional)
+=head3 B<name> (optional)
 
 A simple name to describe the specification
 
     "name" : "CouchDB"
 
-=item B<author> (optional)
+=head3 B<author> (optional)
 
 A list of authors for this specification
 
@@ -67,7 +65,7 @@ A list of authors for this specification
 
 XXX should be renamed to be plural?
 
-=item B<api_base_url> (optional)
+=head3 B<api_base_url> (optional)
 
 If the API has a fixed URL
 
@@ -75,7 +73,7 @@ If the API has a fixed URL
 
 Should not including a trailing slash.
 
-=item B<api_format> (optional)
+=head3 B<api_format> (optional)
 
 A list of supported formats
 
@@ -86,7 +84,7 @@ A list of supported formats
 
 XXX what does "supported format" actually mean? What's the effect?
 
-=item B<version> (optional)
+=head3 B<version> (optional)
 
 The version number of the current description, expressed as a string
 
@@ -94,21 +92,19 @@ The version number of the current description, expressed as a string
 
 XXX Any semantics or just for documentation?
 
-=item B<authentication> (optional)
+=head3 B<authentication> (optional)
 
 A boolean to specify if this API requires authentication for all the methods
 
     "authentication" : 1
 
-=item B<methods> (required)
+=head3 B<methods> (required)
 
 Specifies the methods to be defined.
 
     "methods" : { ... }
 
 See L</METHOD DESCRIPTION>.
-
-=back
 
 The desciption B<MUST> contain a list of at least one method
 
@@ -118,15 +114,13 @@ A method must have a name, which is the key in the C<methods> hash described abo
 
     "public_timeline" : { ... }
 
-=over 4
-
-=item B<method> (required)
+=head3 B<method> (required)
 
 An HTTP method
 
     "method" : "GET"
 
-=item B<path> (required)
+=head3 B<path> (required)
 
 Path for the given method. The path can contain I<placeholders>. A placeholder
 B<MUST> begin with a <:>:
@@ -136,7 +130,7 @@ B<MUST> begin with a <:>:
 XXX How can non-placeholder :foo's be included in the path? ie is there an escape mechanism?
 What happens in this example if 'format' isn't listed in params?
 
-=item B<params> (optional)
+=head3 B<params> (optional)
 
 A list of I<optional> parameters (contrast with C<required>).
 This list will be used to replace value in placeholders,
@@ -147,7 +141,7 @@ and if not used in the path, will be added to the query.
       "include_entities"
     ]
 
-=item B<required> (optional)
+=head3 B<required> (optional)
 
 A list of I<required> parameters (contrast with C<params>).
 This list will be used to replace value in placeholders,
@@ -159,7 +153,7 @@ Parameters that are required B<MUST NOT> be repeated in the B<params> field
       "format"
     ]
 
-=item B<expected> (optional)
+=head3 B<expected> (optional)
 
 A list of accepted HTTP status for this method
 
@@ -170,20 +164,20 @@ A list of accepted HTTP status for this method
 
 An exception will be thrown if some other status is returned.
 
-=item B<description> (optional)
+=head3 B<description> (optional)
 
 A simple description for the method. This should not be considered as
 documentation.
 
     "description" : "Returns the 20 most recent statuses, including retweets if they exist, from non-protected users"
 
-=item B<authentication> (optional)
+=head3 B<authentication> (optional)
 
 A boolean to specify if this method requires authentication
 
     "authentication" : 0
 
-=item B<base_url> (optional)
+=head3 B<base_url> (optional)
 
 Specify an url for this method, if different to C<api_base_url>
 
@@ -193,7 +187,7 @@ Should not including a trailing slash.
 
 XXX would be nice to be able to express this as a relative url (relative to api_base_url) That could be handled at build time.
 
-=item B<format> (optional)
+=head3 B<format> (optional)
 
 A list of supported formats for this method, if different to C<api_format>:
 
@@ -202,15 +196,13 @@ A list of supported formats for this method, if different to C<api_format>:
       "xml"
     ]
 
-=item B<documentation> (optional)
+=head3 B<documentation> (optional)
 
 A complete documentation for the given method
 
     "documentation" : "The public timeline is cached for 60 seconds. Requesting more frequently than that will not return any more data, and will count against your rate limit usage."
 
-=back
-
-=head3 SAMPLE
+=head2 SAMPLE
 
 A description for the twitter API (only the API description part and the first method):
 
@@ -232,19 +224,15 @@ A description for the twitter API (only the API description part and the first m
         }
     }
 
-=head3 CALLS
+=head2 CALLS
+
+XXX
 
 =head1 CHANGELOGS
 
-0.1: 2010.10.xx
-
-=over 4
-
-=item *
+=head2 0.1 - 2010.10.xx
 
 Initial version.
-
-=back
 
 =head1 ACKNOWLEDGEMENTS
 
