@@ -55,54 +55,58 @@ This part describes the API itself:
 
 A simple name to describe the specification
 
-    name: CouchDB
+    "name" : "CouchDB"
 
 =item B<author> (optional)
 
 A list of authors for this specification
 
-    author:
-      - franck cuny <franck@lumberjaph.net>
+    "author" : [
+      "franck cuny <franck@lumberjaph.net>"
+    ]
 
-XXX yaml remnant. should it be an json array? can it be a simple string?
+XXX should be renamed to be plural?
 
 =item B<api_base_url> (optional)
 
 If the API has a fixed URL
 
-    api_base_url: http://api.twitter.com/1/
+    "api_base_url" : "http://api.twitter.com/1"
 
-XXX should it end with "/"? twitter.json doesn't.
+Should not including a trailing slash.
 
 =item B<api_format> (optional)
 
-A list of supported format
+A list of supported formats
 
-    api_format:
-      - json
-      - xml
+    "api_format" : [
+      "json"
+      "xml"
+    ]
 
-XXX what does "supported format" actually mean? What's the effect? Is it really a list?
+XXX what does "supported format" actually mean? What's the effect?
 
-=item B<version> (optinal)
+=item B<version> (optional)
 
-The version number of the current description
+The version number of the current description, expressed as a string
 
-    version: 0.1
+    "version" : "0.1"
 
-XXX clarify type (string/numeric). twitter.json has a string. Any semantics or just for documentation?
+XXX Any semantics or just for documentation?
 
 =item B<authentication> (optional)
 
 A boolean to specify if this API requires authentication for all the methods
 
-    authentication: 1
+    "authentication" : 1
 
 =item B<methods> (required)
 
-A list of methods
+Specifies the methods to be defined.
 
-XXX list? twitter.json has a hash
+    "methods" : { ... }
+
+See L</METHOD DESCRIPTION>.
 
 =back
 
@@ -110,9 +114,9 @@ The desciption B<MUST> contain a list of at least one method
 
 =head2 METHOD DESCRIPTION
 
-A method must have a name, which is the key of the C<methods> hash described above:
+A method must have a name, which is the key in the C<methods> hash described above:
 
-    public_timeline
+    "public_timeline" : { ... }
 
 =over 4
 
@@ -120,84 +124,89 @@ A method must have a name, which is the key of the C<methods> hash described abo
 
 An HTTP method
 
-    method: GET
+    "method" : "GET"
 
 =item B<path> (required)
 
 Path for the given method. The path can contain I<placeholders>. A placeholder
 B<MUST> begin with a <:>:
 
-    path: /statuses/public_timeline.:format
+    "path" : "/statuses/public_timeline.:format"
 
 XXX How can non-placeholder :foo's be included in the path? ie is there an escape mechanism?
 What happens in this example if 'format' isn't listed in params?
 
 =item B<params> (optional)
 
-A list of optional parameters (also see C<required> below).
+A list of I<optional> parameters (contrast with C<required>).
 This list will be used to replace value in placeholders,
-and if not used in the path, will be added to the query
+and if not used in the path, will be added to the query.
 
-    params:
-      - trim_user
-      - include_entities
-
-XXX yaml
+    "params" : [
+      "trim_user",
+      "include_entities"
+    ]
 
 =item B<required> (optional)
 
-A list of required parameters. Parameters that are required B<MUST NOT> be
-repeated in the B<params> field
+A list of I<required> parameters (contrast with C<params>).
+This list will be used to replace value in placeholders,
+and if not used in the path, will be added to the query.
 
-    required:
-      - format
+Parameters that are required B<MUST NOT> be repeated in the B<params> field
 
-XXX yaml
+    "required" : [
+      "format"
+    ]
 
 =item B<expected> (optional)
 
 A list of accepted HTTP status for this method
 
-    expected:
-      - 200
+    "expected" : [
+      200,
+      204
+    ]
 
-XXX what are the semantics of this? ie does it mean that an exception will be
-thrown if some other status is returned?
+An exception will be thrown if some other status is returned.
 
 =item B<description> (optional)
 
 A simple description for the method. This should not be considered as
 documentation.
 
-    description: Returns the 20 most recent statuses, including retweets if they exist, from non-protected users
+    "description" : "Returns the 20 most recent statuses, including retweets if they exist, from non-protected users"
 
 =item B<authentication> (optional)
 
 A boolean to specify if this method requires authentication
 
-    authentication: 0
+    "authentication" : 0
 
 =item B<base_url> (optional)
 
-Specify an url if this method requires a different api_base_url
+Specify an url for this method, if different to C<api_base_url>
 
-    base_url: http://api.twitter.com/1/
+    "base_url" : "http://api.twitter.com/1"
 
-XXX trailing slash?
+Should not including a trailing slash.
+
+XXX would be nice to be able to express this as a relative url (relative to api_base_url) That could be handled at build time.
 
 =item B<format> (optional)
 
 A list of supported formats for this method, if different to C<api_format>:
 
-    format:
-      - json
-      - xml
+    "format" : [
+      "json",
+      "xml"
+    ]
 
 =item B<documentation> (optional)
 
 A complete documentation for the given method
 
-    documentation: The public timeline is cached for 60 seconds. Requesting more frequently than that will not return any more data, and will count against your rate limit usage.
+    "documentation" : "The public timeline is cached for 60 seconds. Requesting more frequently than that will not return any more data, and will count against your rate limit usage."
 
 =back
 
@@ -278,6 +287,8 @@ I'd like to thank authors of these great documents.
 =over 4
 
 =item damien "bl0b" leroux
+
+=item Tim Bunce
 
 =back
 
