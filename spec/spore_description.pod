@@ -42,6 +42,9 @@ create a programmatic interface in the target system.
 An API should provide a description file. The description should be in JSON
 format.
 
+XXX all the example should be changes to use valid json fragments instead of yaml.
+I've noted the obvious cases (lists) but the others also need changing to add double quotes etc.
+
 =head2 GENERIC DESCRIPTION
 
 This part describes the API itself:
@@ -61,11 +64,15 @@ A list of authors for this specification
     author:
       - franck cuny <franck@lumberjaph.net>
 
+XXX yaml remnant. should it be an json array? can it be a simple string?
+
 =item B<api_base_url> (optional)
 
 If the API has a fixed URL
 
     api_base_url: http://api.twitter.com/1/
+
+XXX should it end with "/"? twitter.json doesn't.
 
 =item B<api_format> (optional)
 
@@ -75,11 +82,15 @@ A list of supported format
       - json
       - xml
 
+XXX what does "supported format" actually mean? What's the effect? Is it really a list?
+
 =item B<version> (optinal)
 
 The version number of the current description
 
     version: 0.1
+
+XXX clarify type (string/numeric). twitter.json has a string. Any semantics or just for documentation?
 
 =item B<authentication> (optional)
 
@@ -91,13 +102,15 @@ A boolean to specify if this API requires authentication for all the methods
 
 A list of methods
 
+XXX list? twitter.json has a hash
+
 =back
 
 The desciption B<MUST> contain a list of at least one method
 
 =head2 METHOD DESCRIPTION
 
-A method must have a name:
+A method must have a name, which is the key of the C<methods> hash described above:
 
     public_timeline
 
@@ -111,19 +124,25 @@ An HTTP method
 
 =item B<path> (required)
 
-Path for the given method. The path can contain B<placeholders>. A placeholder
+Path for the given method. The path can contain I<placeholders>. A placeholder
 B<MUST> begin with a <:>:
 
     path: /statuses/public_timeline.:format
 
+XXX How can non-placeholder :foo's be included in the path? ie is there an escape mechanism?
+What happens in this example if 'format' isn't listed in params?
+
 =item B<params> (optional)
 
-A list of parameters. This list will be used to replace value in placeholders,
+A list of optional parameters (also see C<required> below).
+This list will be used to replace value in placeholders,
 and if not used in the path, will be added to the query
 
     params:
       - trim_user
       - include_entities
+
+XXX yaml
 
 =item B<required> (optional)
 
@@ -133,12 +152,17 @@ repeated in the B<params> field
     required:
       - format
 
+XXX yaml
+
 =item B<expected> (optional)
 
 A list of accepted HTTP status for this method
 
     expected:
       - 200
+
+XXX what are the semantics of this? ie does it mean that an exception will be
+thrown if some other status is returned?
 
 =item B<description> (optional)
 
@@ -157,13 +181,15 @@ A boolean to specify if this method requires authentication
 
 Specify an url if this method requires a different api_base_url
 
-    api_base_url: http://api.twitter.com/1/
+    base_url: http://api.twitter.com/1/
+
+XXX trailing slash?
 
 =item B<format> (optional)
 
-A list of supported format
+A list of supported formats for this method, if different to C<api_format>:
 
-    api_format:
+    format:
       - json
       - xml
 
