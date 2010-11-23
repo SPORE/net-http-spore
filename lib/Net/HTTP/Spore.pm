@@ -170,7 +170,13 @@ sub _add_methods {
 
 =head1 DESCRIPTION
 
-This module is an implementation of the SPORE specification. To use this client, you need to use or to write a SPORE specification of an API. Some specifications are available L<http://github.com/SPORE/api-description>.
+This module is an implementation of the SPORE specification.
+
+To use this client, you need to use or to write a SPORE specification of an API.
+A description of the SPORE specification format is available at
+L<http://github.com/SPORE/specifications/blob/master/spore_description.pod>
+
+Some specifications for well-known services are available L<http://github.com/SPORE/api-description>.
 
 =head2 CLIENT CREATION
 
