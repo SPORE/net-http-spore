@@ -221,8 +221,10 @@ sub wrap {
         my $response = $self->http_request($env);
         my $code = $response->status;
 
-        die $response if ( $method->has_expected_status
-            && !$method->find_expected_status( sub { /$code/ } ) );
+        my $ok = ($method->has_expected_status)
+            ? $method->find_expected_status( sub { $_ eq $code } )
+            : $response->is_success; # only 2xx is success
+        die $response if not $ok;
 
         $response;
     };
