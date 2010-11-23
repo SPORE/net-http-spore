@@ -26,6 +26,7 @@ sub env            { shift->request->env }
 sub content_type   { shift->headers->content_type(@_) }
 sub content_length { shift->headers->content_length(@_) }
 sub location       { shift->header->header( 'Location' => @_ ) }
+sub is_success     { shift->status =~ /^2\d\d$/ }
 
 sub status {
     my $self = shift;
