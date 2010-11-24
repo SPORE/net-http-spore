@@ -20,6 +20,10 @@
             "path" : "/show",
             "method" : "GET"
         },
+      "add_user": {
+        "path":"/add",
+        "method":"POST"
+      },
       "add_email" : {
         "path" : "/email",
         "method" : "POST",
