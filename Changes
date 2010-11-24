@@ -1,3 +1,11 @@
+
+    - stringify Net::HTTP::Response to a useful message
+    - fix an issue where content-typ was not set correctly
+    - add is_success method to Net::HTTP::Spore::Response (Tim Bunce)
+    - throw exception by default if not is_success (Tim Bunce)
+    - convert examples to JSON (Tim Bunce)
+    - update POD readability (Tim Bunce)
+
 0.03 Mon 22 Nov 2010 03:01:35 PM CET
     - add form-data and headers
     - add tests
