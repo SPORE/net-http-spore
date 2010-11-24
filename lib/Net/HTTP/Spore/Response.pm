@@ -5,7 +5,10 @@ package Net::HTTP::Spore::Response;
 use strict;
 use warnings;
 
-use overload '@{}' => \&finalize, fallback => 1;
+use overload
+    '@{}' => \&finalize,
+    '""' => \&to_string,
+    fallback => 1;
 
 use HTTP::Headers;
 
@@ -91,8 +94,14 @@ sub header {
     $self->headers->header(@_);
 }
 
+sub to_string {
+    my $self = shift;
+    return "HTTP status: ".$self->{status};
+}
+
 sub finalize {
     my $self = shift;
+
     return [
         $self->status,
         +[
