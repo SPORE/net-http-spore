@@ -4,6 +4,7 @@ use warnings;
 use Test::More;
 use MIME::Base64;
 
+use Try::Tiny;
 use Net::HTTP::Spore;
 
 my $username = 'franck';
@@ -44,11 +45,15 @@ foreach my $test (@tests) {
         't/specs/api.json', base_url => 'http://localhost/'
       ),
       'client created';
+
     foreach ( @{ $test->{middlewares} } ) {
         $client->enable(@$_);
     }
 
-    my $res = $client->get_info();
-    is $res->[0], $test->{expected}->{status}, 'valid HTTP status';
-    is $res->[2], $test->{expected}->{body},   'valid HTTP body';
+    my $res;
+
+    try { $res = $client->get_info(); } catch { $res = $_ };
+
+    is $res->status, $test->{expected}->{status}, 'valid HTTP status';
+    is $res->body, $test->{expected}->{body},   'valid HTTP body';
 }
