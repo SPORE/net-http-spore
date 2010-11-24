@@ -318,7 +318,8 @@ sub finalize {
     if ( my $payload = $self->content ) {
         $request->content($payload);
         $request->header(
-            'Content-Type' => 'application/x-www-form-urlencoded' );
+            'Content-Type' => 'application/x-www-form-urlencoded' )
+          unless $request->header('Content-Type');
     }
 
     return $request;
