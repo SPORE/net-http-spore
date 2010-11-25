@@ -20,7 +20,7 @@ ok my $client =
   Net::HTTP::Spore->new_from_spec( 't/specs/api.json',
     base_url => 'http://localhost:5984' );
 
-$client->enable('Format::XML');
+$client->enable('Format::XML', forcearray => 1, normalizespace => 1);
 $client->enable( 'Mock', tests => $mock_server );
 
 my $res = $client->get_info();
