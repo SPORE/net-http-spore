@@ -1,4 +1,5 @@
 
+    - allow XML::Simple options for Format::XML (fperrad)
     - stringify Net::HTTP::Response to a useful message
     - fix an issue where content-typ was not set correctly
     - add is_success method to Net::HTTP::Spore::Response (Tim Bunce)
