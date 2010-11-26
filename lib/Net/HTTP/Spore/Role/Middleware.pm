@@ -24,7 +24,10 @@ sub _load_middleware {
 sub _complete_mw_name {
     my ($self, $mw) = @_;
 
-    if ($mw !~ /(?:^\+|Net\:\:HTTP\:\:Spore\:\:Middleware)/) {
+    if ($mw =~ /^\+/) {
+        $mw =~ s/^\+//;
+    }
+    elsif ($mw !~ /Net\:\:HTTP\:\:Spore\:\:Middleware/) {
         $mw = "Net::HTTP::Spore::Middleware::".$mw;
     }
 
