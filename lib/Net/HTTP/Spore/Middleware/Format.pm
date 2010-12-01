@@ -54,8 +54,9 @@ sub call {
         sub {
             my $res = shift;
             if ( $res->body ) {
-                my $content = $self->decode( $res->body );
+                return if $res->code >= 500;
                 return unless $self->should_deserialize( $res->env );
+                my $content = $self->decode( $res->body );
                 $res->body($content);
                 $res->env->{ $self->deserializer_key } = 1;
             }
