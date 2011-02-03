@@ -67,7 +67,11 @@ sub _execute_middlewares_on_response {
 sub _request {
     my ($self, $request) = @_;
 
-    my $result = $self->request($request->finalize);
+    my $req_final = $request->finalize();
+
+    $self->_trace_msg( $req_final->method . ' ' . $req_final->url );
+
+    my $result = $self->request($req_final);
 
     my $response = $request->new_response(
         $result->code,

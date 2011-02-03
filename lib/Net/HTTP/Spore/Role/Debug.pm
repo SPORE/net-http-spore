@@ -9,6 +9,13 @@ has trace => (
     default => sub { $ENV{SPORE_TRACE} ? 1 : 0; }
 );
 
-sub _trace_msg { print STDOUT $_[1]."\n" if $_[0]->trace; }
+has handle => (
+    is => 'rw', isa => 'Object',
+);
+
+sub _trace_msg {
+    my $self = shift;
+    print STDOUT $_[0]."\n" if $self->trace;
+}
 
 1;
