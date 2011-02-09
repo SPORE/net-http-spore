@@ -151,6 +151,9 @@ sub _add_methods {
 
     my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
 
+    # from JSON specification string
+    my $client = Net::HTTP::Spore->new_from_string($json);
+
     # for identica
     my $client = Net::HTTP::Spore->new_from_spec('twitter.json', base_url => 'http://identi.ca/com/api');
 
@@ -202,7 +205,7 @@ either be a file on disk or a remote URL.
 =item new_from_string($specification_string, %args)
 
 Create and return a L<Net::HTTP::Spore::Core> object, with methods
-generated from the specification string.
+generated from a JSON specification string.
 
 =back
 
