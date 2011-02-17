@@ -32,7 +32,7 @@
     h1 .small { font-size: 0.4em; }
     h1 a { text-decoration: none }
     h2 { font-size: 1.5em; color: #3e9ab7; }
-    h3 { text-align: center; color: #3e9ab7; }
+    h3 { font-size: 1.2em; color: #3e9ab7; }
     a { color: #3e9ab7; }
     .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
     .download { float: right; }
@@ -109,7 +109,12 @@ my $friends_timeline = $client->friends_timeline(format => 'json');
     
     or only on some path
 
-    <pre>$client->enable_if(sub{$_->[0]->path =~ m!/path/to/json/stuff!}, 'Format::JSON');</pre>
+    <pre>
+$client->enable_if(
+  sub{$_->[0]->path =~ m!/path/to/json/stuff!},
+  'Format::JSON'
+);
+    </pre>
 
     <h2>Authors</h2>
     <p>Tim Bunce (Tim.Bunce@pobox.com)<br/>franck cuny (franck@lumberjaph.net)<br/>Nils Grunwald (nils@grunwald.fr)<br/><br/>      </p>
