@@ -78,21 +78,17 @@
 
     <h2>Synopsis</h2>
     <pre>
-    my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
+my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
+$client->enable('Format::JSON');
 
-    # for identica
-    my $client = Net::HTTP::Spore->new_from_spec('twitter.json', base_url => 'http://identi.ca/com/api');
+my $timeline = $client->public_timeline(format => 'json');
+my $tweets = $timeline->body;
 
-    $client->enable('Format::JSON');
+foreach my $tweet (@$tweets) {
+  print $tweet->{user}->{screen_name}. " says ".$tweet->{text}."\n";
+}
 
-    my $timeline = $client->public_timeline(format => 'json');
-    my $tweets = $timeline->body;
-
-    foreach my $tweet (@$tweets) {
-        print $tweet->{user}->{screen_name}. " says ".$tweet->{text}."\n";
-    }
-
-    my $friends_timeline = $client->friends_timeline(format => 'json');
+my $friends_timeline = $client->friends_timeline(format => 'json');
     </pre>
     <h2>Documentation</h2>
     
