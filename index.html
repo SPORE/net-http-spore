@@ -38,7 +38,9 @@
     .download { float: right; }
     pre { background: #000; color: #fff; padding: 15px;}
     hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
+    .footer { text-align:center; padding-top:30px; font-style: italic;
+    }
+    .code {background: #f0f0f0; color: eee; padding: 15px; }
   </style>
 
   <script type="text/javascript"> 
@@ -75,8 +77,23 @@
     </div>
 
     <h2>Synopsis</h2>
-    <script src="https://gist.github.com/831883.js?file=synopsis.pl"></script>
-    
+    <pre>
+    my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
+
+    # for identica
+    my $client = Net::HTTP::Spore->new_from_spec('twitter.json', base_url => 'http://identi.ca/com/api');
+
+    $client->enable('Format::JSON');
+
+    my $timeline = $client->public_timeline(format => 'json');
+    my $tweets = $timeline->body;
+
+    foreach my $tweet (@$tweets) {
+        print $tweet->{user}->{screen_name}. " says ".$tweet->{text}."\n";
+    }
+
+    my $friends_timeline = $client->friends_timeline(format => 'json');
+    </pre>
     <h2>Documentation</h2>
     
     
