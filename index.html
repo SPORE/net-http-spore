@@ -88,8 +88,7 @@ foreach my $tweet (@$tweets) {
   print $tweet->{user}->{screen_name}. " says ".$tweet->{text}."\n";
 }
 
-my $friends_timeline = $client->friends_timeline(format => 'json');
-    </pre>
+my $friends_timeline = $client->friends_timeline(format => 'json');    </pre>
 
     <h2>Documentation</h2>
 
@@ -113,8 +112,7 @@ my $friends_timeline = $client->friends_timeline(format => 'json');
 $client->enable_if(
   sub{$_->[0]->path =~ m!/path/to/json/stuff!},
   'Format::JSON'
-);
-    </pre>
+);    </pre>
 
     <h2>Authors</h2>
     <p>Tim Bunce (Tim.Bunce@pobox.com)<br/>franck cuny (franck@lumberjaph.net)<br/>Nils Grunwald (nils@grunwald.fr)<br/><br/>      </p>
