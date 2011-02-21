@@ -59,11 +59,11 @@ sub _execute_middlewares_on_response {
 sub _request {
     my ($self, $request) = @_;
 
-    my $req_final = $request->finalize();
+    my $finalized_request = $request->finalize();
 
-    $self->_trace_msg( $req_final->method . ' ' . $req_final->url );
+    $self->_debug_request($request, $finalized_request);
 
-    my $result = $self->request($req_final);
+    my $result = $self->request($finalized_request);
 
     my $response = $request->new_response(
         $result->code,
@@ -71,7 +71,30 @@ sub _request {
         $result->content,
     );
 
+    $self->_debug_response($response);
+
     return $response;
+}
+
+sub _debug_request {
+    my ( $self, $request, $finalized_request ) = @_;
+    return unless $self->trace;
+
+    $self->_trace_msg( '> %s %s', $request->method, $request->path );
+    $self->_trace_msg( '> Host: %s', $request->host );
+    foreach my $key ( $request->headers->header_field_names ) {
+        $self->_trace_msg( '> %s: %s', $key, $request->header($key) );
+    }
+}
+
+sub _debug_response {
+    my ($self, $response) = @_;
+    return unless $self->trace;
+
+    foreach my $key ( $response->headers->header_field_names ) {
+        $self->_trace_msg( '< %s: %s', $key, $response->header($key) );
+    }
+    $self->_trace_verbose($response->body);
 }
 
 1;
