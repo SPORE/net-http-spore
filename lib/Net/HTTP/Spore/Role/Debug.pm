@@ -9,10 +9,10 @@ has trace => (
     lazy    => 1,
     default => sub {
         my $self      = shift;
-        my $trace_env = $ENV{SPORE_TRACE};
-        my @stack = caller; use YAML; warn Dump \@stack;
+        my $trace_env = $ENV{SPORE_TRACE} || 0;
+        #my @stack = caller; use YAML; warn Dump \@stack;
         my ($fh, $level);
-        if ( defined($trace_env) && ( $trace_env =~ /(\d)=(.+)$/ ) ) {
+        if ( $trace_env =~ /(\d)=(.+)$/ ) {
             $level = $1;
             $fh = IO::File->new( $2, 'w' )
               or die("Cannot open trace file $1");
