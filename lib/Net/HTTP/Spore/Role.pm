@@ -3,38 +3,42 @@ package Net::HTTP::Spore::Role;
 use MooseX::Role::Parameterized;
 use Net::HTTP::Spore;
 
-parameter name => (isa => 'Str', required => 1);
-parameter config => (isa => 'Str', required => 1);
+parameter spore_clients => (isa => 'ArrayRef[HashRef]', required => 1);
 
 role {
-    my $p      = shift;
-    my $name   = $p->name;
-    my $config = $p->config;
+    my $p       = shift;
+    my $clients = $p->spore_clients;
 
-    has $name => (
-        is      => 'rw',
-        isa     => 'Object',
-        lazy    => 1,
-        default => sub {
-            my $self          = shift;
-            my $client_config = $self->$config;
-            my $client        = Net::HTTP::Spore->new_from_spec(
-                $client_config->{spec},
-                %{ $client_config->{options} },
-            );
-            foreach my $mw ( @{ $client_config->{middlewares} } ) {
-                $client->enable($mw);
-            }
-            $client;
-        },
-    );
+    foreach my $client (@$clients) {
+        my $name   = $client->{name};
+        my $config = $client->{config};
 
-    has $config => (
-        is      => 'rw',
-        isa     => 'HashRef',
-        lazy    => 1,
-        default => sub { {} },
-    );
+        has $name => (
+            is      => 'rw',
+            isa     => 'Object',
+            lazy    => 1,
+            default => sub {
+                my $self          = shift;
+                my $client_config = $self->$config;
+                my $client        = Net::HTTP::Spore->new_from_spec(
+                    $client_config->{spec},
+                    %{ $client_config->{options} },
+                );
+                foreach my $mw ( @{ $client_config->{middlewares} } ) {
+                    my %options = %{$mw->{options} || {}};
+                    $client->enable( $mw->{name}, %options);
+                }
+                $client;
+            },
+        );
+
+        has $config => (
+            is      => 'rw',
+            isa     => 'HashRef',
+            lazy    => 1,
+            default => sub { {} },
+        );
+    }
 };
 
 1;
