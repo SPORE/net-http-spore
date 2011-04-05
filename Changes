@@ -6,6 +6,7 @@
     - throw exception by default if not is_success (Tim Bunce)
     - convert examples to JSON (Tim Bunce)
     - update POD readability (Tim Bunce)
+    - Added generic role
 
 0.03 Mon 22 Nov 2010 03:01:35 PM CET
     - add form-data and headers
