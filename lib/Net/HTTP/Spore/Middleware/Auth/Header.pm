@@ -3,7 +3,7 @@ package Net::HTTP::Spore::Middleware::Auth::Header;
 # ABSTRACT: middleware for authentication with specific header
 
 use Moose;
-extends 'Net::HTTP::Spore::Middleware::Auth::Auth';
+extends 'Net::HTTP::Spore::Middleware::Auth';
 
 has header_name => (isa => 'Str', is => 'rw', required => 1);
 has header_value => (isa => 'Str', is => 'rw', required => 1);
