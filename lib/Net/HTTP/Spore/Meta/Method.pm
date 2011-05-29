@@ -210,6 +210,7 @@ sub wrap {
             'spore.payload'         => $payload,
             'spore.errors'          => *STDERR,
             'spore.url_scheme'      => $base_url->scheme,
+            'spore.userinfo'        => $base_url->userinfo,
             'spore.formats'         => $formats,
         };
 
