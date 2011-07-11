@@ -4,28 +4,9 @@ use IO::File;
 use Moose::Role;
 
 has trace => (
-    is      => 'rw',
-    isa     => 'Int',
-    lazy    => 1,
-    default => sub {
-        my $self      = shift;
-        my $trace_env = $ENV{SPORE_TRACE} || 0;
-        #my @stack = caller; use YAML; warn Dump \@stack;
-        my ($fh, $level);
-        if ( $trace_env =~ /(\d)=(.+)$/ ) {
-            $level = $1;
-            $fh = IO::File->new( $2, 'w' )
-              or die("Cannot open trace file $1");
-        }
-        else {
-            $level = $trace_env;
-            $fh = IO::File->new('>&STDERR')
-              or die('Duplication of STDERR for debug output failed (perhaps your STDERR is closed?)');
-        }
-        $fh->autoflush();
-        $self->_trace_fh($fh);
-        return $level;
-    }
+    is        => 'rw',
+    isa       => 'Str',
+    predicate => 'has_trace',
 );
 
 has _trace_fh => (
@@ -33,10 +14,32 @@ has _trace_fh => (
     isa     => 'GLOB',
 );
 
+sub BUILD {
+    my ($self, $args) = @_;
+    my $trace = $ENV{SPORE_TRACE} || $args->{trace};
+    return unless defined $trace;
+
+    my ($level, $fh);
+    if ( $trace =~ /(\d)=(.+)$/ ) {
+        $level = $1;
+        my $file  = $2;
+        $fh    = IO::File->new( $file, 'w' )
+          or die "Cannot open trace file $file";
+    }
+    else {
+        $level = $trace;
+        $fh = IO::File->new('>&STDERR')
+              or die('Duplication of STDERR for debug output failed (perhaps your STDERR is closed?)');
+    }
+    $fh->autoflush;
+    $self->_trace_fh($fh);
+    $self->trace($level);
+}
+
 sub _trace_msg {
     my $self     = shift;
     my $template = shift;
-    return unless $self->trace;
+    return unless $self->has_trace;
     my $fh = $self->_trace_fh();
     print $fh (sprintf( $template, @_ )."\n");
 }
