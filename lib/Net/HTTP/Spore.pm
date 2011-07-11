@@ -207,4 +207,22 @@ either be a file on disk or a remote URL.
 Create and return a L<Net::HTTP::Spore::Core> object, with methods
 generated from the specification string.
 
+=head2 TRACING
+
+L<Net::HTTP::Spore> provides a way to trace what's going on when doing a request.
+
+=head3 Enabling Trace
+
+You can enable tracing using the environment variable B<SPORE_TRACE>. You can also enable tracing at construct time by adding B<trace =E-<GT> 1> when calling B<new_from_spec>.
+
+=head3 Trace Output
+
+By default output will be directed to B<STDERR>. You can specify another default output:
+
+    SPORE_TRACE=1=log.txt
+
+or
+
+    ->new_from_spec('spec.json', trace => '1=log.txt');
+
 =back
