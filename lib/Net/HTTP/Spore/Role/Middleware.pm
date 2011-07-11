@@ -18,6 +18,7 @@ sub _load_middleware {
     Class::MOP::load_class($mw);
 
     my $code = $mw->wrap( $cond, @args );
+    $self->_trace_msg('== enabling middleware %s', $mw);
     $self->_add_middleware($code);
 }
 
