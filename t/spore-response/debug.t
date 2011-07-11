@@ -2,8 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 use Net::HTTP::Spore;
-use File::Temp qw/ :seekable /;
-use Try::Tiny;
+use File::Temp;
 
 my $mock_server = {
     '/show' => sub {
