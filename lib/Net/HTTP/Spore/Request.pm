@@ -26,7 +26,7 @@ has path => (
     is      => 'rw',
     isa     => 'Str',
     lazy    => 1,
-    default => sub { $_[0]->path_info }
+    default => sub { $_[0]->env->{PATH_INFO} }
 );
 
 has headers => (
