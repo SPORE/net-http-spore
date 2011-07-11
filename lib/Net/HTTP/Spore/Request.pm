@@ -193,7 +193,11 @@ sub _uri_base {
 
     my $uri =
       ( $env->{'spore.url_scheme'} || "http" ) . "://"
-          .($env->{'spore.userinfo'} . '@'|| '')
+      . (
+        defined $env->{'spore.userinfo'}
+        ? $env->{'spore.userinfo'} . '@'
+        : ''
+      )
       . (
         $env->{HTTP_HOST}
           || (( $env->{SERVER_NAME} || "" ) . ":"
