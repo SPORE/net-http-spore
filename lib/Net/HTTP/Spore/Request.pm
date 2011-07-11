@@ -68,6 +68,15 @@ sub method {
     }
 }
 
+sub host {
+    my ($self, $value) = @_;
+    if ($value) {
+        $self->set_to_env('SERVER_NAME', $value);
+    }else{
+        return $self->get_from_env('SERVER_NAME');
+    }
+}
+
 sub port {
     my ( $self, $value ) = @_;
     if ($value) {
