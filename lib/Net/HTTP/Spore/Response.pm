@@ -96,7 +96,11 @@ sub header {
 
 sub to_string {
     my $self = shift;
-    return "HTTP status: ".$self->{status};
+    my $status = "HTTP status: ".$self->{status};
+    if ($self->{body} =~ /read timeout/){
+        $status .= " - read timeout";
+    }
+    return $status;
 }
 
 sub finalize {
