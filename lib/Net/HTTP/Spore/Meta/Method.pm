@@ -17,7 +17,7 @@ subtype UriPath
     => where { $_ =~ m!^/! }
     => message {"path must start with /"};
 
-enum Method => qw(HEAD GET POST PUT DELETE);
+enum Method => qw(OPTIONS HEAD GET POST PUT DELETE TRACE);
 
 subtype 'JSON::XS::Boolean' => as 'JSON::XS::Boolean';
 subtype 'JSON::PP::Boolean' => as 'JSON::PP::Boolean';
