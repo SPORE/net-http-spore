@@ -90,6 +90,7 @@ sub _debug_request {
 
     $self->_trace_msg( '> %s %s', $request->method, $request->path );
     $self->_trace_msg( '> Host: %s', $request->host );
+    $self->_trace_msg( '> Query String: %s', $request->env->{QUERY_STRING});
     foreach my $key ( $request->headers->header_field_names ) {
         $self->_trace_msg( '> %s: %s', $key, $request->header($key) );
     }
