@@ -10,7 +10,7 @@ my $req = Net::HTTP::Spore::Request->new(
         SERVER_NAME       => 'example.com',
         SCRIPT_NAME       => '/foo',
         REMOTE_ADDR       => '127.0.0.1',
-        'spore.scheme'    => 'http',
+        'spore.url_scheme'    => 'http',
     }
 );
 
