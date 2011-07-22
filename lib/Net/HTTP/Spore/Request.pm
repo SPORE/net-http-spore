@@ -110,10 +110,10 @@ sub request_uri {
 sub scheme {
     my ($self, $value) = @_;
     if ($value) {
-        $self->set_to_env( 'spore.scheme', $value );
+        $self->set_to_env( 'spore.url_scheme', $value );
     }
     else {
-        return $self->get_from_env('spore.scheme');
+        return $self->get_from_env('spore.url_scheme');
     }
 }
 
