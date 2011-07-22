@@ -7,6 +7,8 @@
     - convert examples to JSON (Tim Bunce)
     - update POD readability (Tim Bunce)
     - Added generic role
+    - OAuth middleware
+    - add option to display trace (via env or constructor)
 
 0.03 Mon 22 Nov 2010 03:01:35 PM CET
     - add form-data and headers
@@ -15,11 +17,11 @@
     - remove 'path_info' method from N::H::S::Request object
     - remove 'query_string' method from N::H::S::Request object
 
-0.02 Thu 14 Oct 2010 02:08:27 PM CEST  
+0.02 Thu 14 Oct 2010 02:08:27 PM CEST
     - add types for JSON booleans values
     - params is now an hashref with 'optional' and 'required'
     - update some tests
     - updated couchdb.json spec for our tests
 
-0.01 Tue 14 Sep 2010 03:18:22 PM CEST  
+0.01 Tue 14 Sep 2010 03:18:22 PM CEST
     - initial release
