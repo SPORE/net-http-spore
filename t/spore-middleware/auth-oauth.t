@@ -3,9 +3,6 @@ use warnings;
 use URI::Escape;
 use Test::More;
 
-use Try::Tiny;
-use YAML::Syck;
-
 use Net::HTTP::Spore;
 use JSON;
 
