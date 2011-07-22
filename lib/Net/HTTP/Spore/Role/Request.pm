@@ -88,9 +88,13 @@ sub _debug_request {
     my ( $self, $request, $finalized_request ) = @_;
     return unless $self->trace;
 
-    $self->_trace_msg( '> %s %s', $request->method, $request->path );
+    $self->_trace_msg( '> %s %s%s', $request->method, $request->script_name, $request->path );
     $self->_trace_msg( '> Host: %s', $request->host );
-    $self->_trace_msg( '> Query String: %s', $request->env->{QUERY_STRING});
+    $self->_trace_msg( '> Query String: %s', $request->env->{QUERY_STRING} )
+      if defined $request->env->{QUERY_STRING};
+    $self->_trace_msg( '> Content: %s', $request->content )
+      if defined $request->content;
+
     foreach my $key ( $request->headers->header_field_names ) {
         $self->_trace_msg( '> %s: %s', $key, $request->header($key) );
     }
