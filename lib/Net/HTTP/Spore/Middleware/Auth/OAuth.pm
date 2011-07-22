@@ -92,12 +92,17 @@ sub _base_string {
     my $scheme = $req->scheme;
     my $port   = $req->port;
 
-    if ($port == 80 and $scheme eq 'http'){
+    if ( $port == 80 && $scheme eq 'http' ) {
         $port = undef;
     }
-    if (defined $scheme && $port == 443 and $scheme eq 'https'){
+    if (   defined $port
+        && defined $scheme
+        && $port == 443
+        && $scheme eq 'https' )
+    {
         $port = undef;
     }
+
 
     my $uri =
         ( $scheme || 'https' ) . "://"
