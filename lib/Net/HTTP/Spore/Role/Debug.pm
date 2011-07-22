@@ -19,7 +19,7 @@ sub BUILD {
     my ($self, $args) = @_;
     my $trace;
 
-    $trace = $args->{trace} && $args->{trace} > 0 ? $args->{trace} : undef;
+    $trace = $args->{trace} if $args->{trace};
     $trace = $ENV{SPORE_TRACE} if defined $ENV{SPORE_TRACE};
 
     if (!defined $trace){
