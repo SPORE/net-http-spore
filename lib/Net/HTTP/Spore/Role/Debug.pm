@@ -7,6 +7,7 @@ has trace => (
     is        => 'rw',
     isa       => 'Str',
     predicate => 'has_trace',
+    clearer => 'reset_trace',
 );
 
 has _trace_fh => (
@@ -16,8 +17,15 @@ has _trace_fh => (
 
 sub BUILD {
     my ($self, $args) = @_;
-    my $trace = $ENV{SPORE_TRACE} || $args->{trace};
-    return unless defined $trace;
+    my $trace;
+
+    $trace = $args->{trace} && $args->{trace} > 0 ? $args->{trace} : undef;
+    $trace = $ENV{SPORE_TRACE} if defined $ENV{SPORE_TRACE};
+
+    if (!defined $trace){
+        $self->reset_trace;
+        return;
+    }
 
     my ($level, $fh);
     if ( $trace =~ /(\d)=(.+)$/ ) {
@@ -40,6 +48,7 @@ sub _trace_msg {
     my $self     = shift;
     my $template = shift;
     return unless $self->has_trace;
+
     my $fh = $self->_trace_fh();
     print $fh (sprintf( $template, @_ )."\n");
 }
