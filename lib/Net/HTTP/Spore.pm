@@ -207,6 +207,8 @@ either be a file on disk or a remote URL.
 Create and return a L<Net::HTTP::Spore::Core> object, with methods
 generated from the specification string.
 
+=back
+
 =head2 TRACING
 
 L<Net::HTTP::Spore> provides a way to trace what's going on when doing a request.
@@ -225,4 +227,3 @@ or
 
     ->new_from_spec('spec.json', trace => '1=log.txt');
 
-=back
