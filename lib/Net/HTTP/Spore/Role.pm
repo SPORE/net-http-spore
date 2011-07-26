@@ -1,5 +1,7 @@
 package Net::HTTP::Spore::Role;
 
+# ABSTRACT: Role to easily add multiples Spore clients to your class
+
 use MooseX::Role::Parameterized;
 use Net::HTTP::Spore;
 
@@ -43,18 +45,17 @@ role {
 
 1;
 
-=head1 NAME
-
-Net::HTTP::Spore::Role
-
-=head1 DESCRIPTION
-
 =head1 SYNOPSIS
 
   package my::app;
   use Moose;
-  with Net::HTTP::Spore::Role => {name => 'twitter', config => 'twitter_config'};
+  with Net::HTTP::Spore::Role =>
+    { spore_clients => [ name => 'twitter', config => 'twitter_config' ] };
 
   ...
 
   my $app = my::app->new(twitter_config => $config->{spore}->{twitter_config});
+
+=head1 DESCRIPTION
+
+This is a role you can apply to your class. This role let you create a Spore client with a specific configuration.
