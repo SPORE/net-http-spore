@@ -1,4 +1,4 @@
-
+0.04 Tue Jul 26 11:32:00 2011
     - allow XML::Simple options for Format::XML (fperrad)
     - stringify Net::HTTP::Response to a useful message
     - fix an issue where content-typ was not set correctly
@@ -9,6 +9,7 @@
     - Added generic role
     - OAuth middleware
     - add option to display trace (via env or constructor)
+    - DoNotTrack middleware
 
 0.03 Mon 22 Nov 2010 03:01:35 PM CET
     - add form-data and headers
