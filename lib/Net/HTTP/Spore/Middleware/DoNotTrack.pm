@@ -15,7 +15,7 @@ sub call {
 =head1 SYNOPSIS
 
     my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
-    $client->enable('Runtime');
+    $client->enable('DoNotTrack');
 
 =head1 DESCRIPTION
 

@@ -1,5 +1,7 @@
 package Net::HTTP::Spore::Middleware::LogDispatch;
 
+# ABSTRACT: Net::HTTP::Spore::Middleware::LogDispatch is a middleware that allow you to use LogDispatch.
+
 use Moose;
 extends 'Net::HTTP::Spore::Middleware';
 
@@ -31,9 +33,3 @@ sub call {
 
     my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
     $client->enable( 'LogDispatch', logger => $log );
-
-=head1 DESCRIPTION
-
-Net::HTTP::Spore::Middleware::LogDispatch is a middleware that allow you to use LogDispatch.
-
-=head1 EXAMPLES
