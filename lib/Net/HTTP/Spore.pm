@@ -88,13 +88,8 @@ sub _attach_spec_to_class {
     };
 
     try {
-        my $base_url;
-        if ( $spec->{base_url} && !$opts->{base_url} ) {
-            $opts->{base_url} = $spec->{base_url};
-        }
-        elsif ( !$opts->{base_url} ) {
-            die "base_url is missing!";
-        }
+        $opts->{base_url} ||= $spec->{base_url};
+        die "base_url is missing!" if !$opts->{base_url};
 
         if ( $spec->{formats} ) {
             $opts->{formats} = $spec->{formats};
