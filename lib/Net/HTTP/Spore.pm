@@ -121,6 +121,10 @@ sub _read_spec {
         my $req = HTTP::Request->new( GET => $spec_file );
         my $ua  = LWP::UserAgent->new();
         my $res = $ua->request($req);
+        unless( $res->is_success ) {
+            my $status = $res->status_line;
+            Carp::confess("Unabled to fetch $spec_file ($status)");
+        }
         $content = $res->content;
     }
     else {
