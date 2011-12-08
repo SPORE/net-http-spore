@@ -214,7 +214,7 @@ L<Net::HTTP::Spore> provides a way to trace what's going on when doing a request
 
 =head3 Enabling Trace
 
-You can enable tracing using the environment variable B<SPORE_TRACE>. You can also enable tracing at construct time by adding B<trace =E-<GT> 1> when calling B<new_from_spec>.
+You can enable tracing using the environment variable B<SPORE_TRACE>. You can also enable tracing at construct time by adding B<trace =E<gt> 1> when calling B<new_from_spec>.
 
 =head3 Trace Output
 
