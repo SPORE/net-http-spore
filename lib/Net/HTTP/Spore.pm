@@ -88,13 +88,8 @@ sub _attach_spec_to_class {
     };
 
     try {
-        my $base_url;
-        if ( $spec->{base_url} && !$opts->{base_url} ) {
-            $opts->{base_url} = $spec->{base_url};
-        }
-        elsif ( !$opts->{base_url} ) {
-            die "base_url is missing!";
-        }
+        $opts->{base_url} ||= $spec->{base_url};
+        die "base_url is missing!" if !$opts->{base_url};
 
         if ( $spec->{formats} ) {
             $opts->{formats} = $spec->{formats};
@@ -126,6 +121,10 @@ sub _read_spec {
         my $req = HTTP::Request->new( GET => $spec_file );
         my $ua  = LWP::UserAgent->new();
         my $res = $ua->request($req);
+        unless( $res->is_success ) {
+            my $status = $res->status_line;
+            Carp::confess("Unabled to fetch $spec_file ($status)");
+        }
         $content = $res->content;
     }
     else {
@@ -215,7 +214,7 @@ L<Net::HTTP::Spore> provides a way to trace what's going on when doing a request
 
 =head3 Enabling Trace
 
-You can enable tracing using the environment variable B<SPORE_TRACE>. You can also enable tracing at construct time by adding B<trace =E-<GT> 1> when calling B<new_from_spec>.
+You can enable tracing using the environment variable B<SPORE_TRACE>. You can also enable tracing at construct time by adding B<trace =E<gt> 1> when calling B<new_from_spec>.
 
 =head3 Trace Output
 

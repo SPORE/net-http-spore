@@ -26,15 +26,15 @@ is scalar @{$client->middlewares}, 0, 'no middleware';
 
 dies_ok {
     $client->enable();
-}, 'middleware name is required';
+} 'middleware name is required';
 
 dies_ok {
     $client->enable('FOOBARBAZAWESOMEMIDDLEWARE');
-}, 'middleware should be loadable';
+} 'middleware should be loadable';
 
 dies_ok {
     $client->enable_if('Format::JSON');
-}, 'enable if require a coderef';
+} 'enable if require a coderef';
 
 $client->enable('Dummy');
 is scalar @{$client->middlewares}, 1, 'middleware dummy added';
