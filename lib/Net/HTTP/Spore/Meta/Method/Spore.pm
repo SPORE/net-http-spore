@@ -37,14 +37,14 @@ sub find_spore_method_by_name {
 
 sub remove_spore_method {
     my ($meta, $name) = @_;
-    my @methods = grep { !/$name/ } $meta->get_all_spore_methods;
+    my @methods = grep { $_ ne $name } $meta->get_all_spore_methods;
     $meta->local_spore_methods(\@methods);
     $meta->remove_method($name);
 }
 
 before add_spore_method => sub {
     my ($meta, $name) = @_;
-    if ($meta->_find_spore_method_by_name(sub {/^$name$/})) {
+    if ($meta->_find_spore_method_by_name(sub {$_ eq $name})) {
         confess "method '$name' is already delcared in ".$meta->name;
     }
 };
