@@ -147,7 +147,7 @@ sub wrap {
             && ( $method->method !~ /^(?:POST|PUT|PATCH)$/i ) )
         {
             die Net::HTTP::Spore::Response->new( 599, [],
-                { error => "payload requires a PUT or POST method" },
+                { error => "payload requires a PUT, PATCH or POST method" },
             );
         }
 
