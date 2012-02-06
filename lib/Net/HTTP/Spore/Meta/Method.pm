@@ -17,7 +17,7 @@ subtype UriPath
     => where { $_ =~ m!^/! }
     => message {"path must start with /"};
 
-enum Method => qw(OPTIONS HEAD GET POST PUT DELETE TRACE);
+enum Method => qw(OPTIONS HEAD GET POST PUT DELETE TRACE PATCH);
 
 subtype 'JSON::XS::Boolean' => as 'JSON::XS::Boolean';
 subtype 'JSON::PP::Boolean' => as 'JSON::PP::Boolean';
@@ -144,7 +144,7 @@ sub wrap {
           : delete $method_args{payload};
 
         if ( $payload
-            && ( $method->method !~ /^P(?:OS|U)T$/i ) )
+            && ( $method->method !~ /^(?:POST|PUT|PATCH)$/i ) )
         {
             die Net::HTTP::Spore::Response->new( 599, [],
                 { error => "payload requires a PUT or POST method" },
