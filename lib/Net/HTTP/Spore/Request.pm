@@ -273,6 +273,7 @@ sub finalize {
     for ( my $i = 0 ; $i < scalar @$params ; $i++ ) {
         my $k = $params->[$i];
         my $v = $params->[++$i];
+        $v    =~ s/\//%2F/g;
         my $modified = 0;
 
         if ($path_info && $path_info =~ s/\:$k/$v/) {
