@@ -159,16 +159,12 @@ sub uri {
 
     my $base = $self->_uri_base;
 
-    my $path_escape_class = '^A-Za-z0-9\-\._~/';
-
-    my $path = URI::Escape::uri_escape($path_info || '', $path_escape_class);
-
     if (defined $query_string && length($query_string) > 0) {
-        $path .= '?' . $query_string;
+        $path_info .= '?' . $query_string;
     }
 
-    $base =~ s!/$!! if $path =~ m!^/!;
-    return URI->new( $base . $path )->canonical;
+    $base =~ s!/$!! if $path_info =~ m!^/!;
+    return URI->new( $base . $path_info )->canonical;
 }
 
 sub _path {
@@ -270,9 +266,11 @@ sub finalize {
     my $query = [];
     my $form  = {};
 
+    my $path_escape_class = '^A-Za-z0-9\-\._~/\/';
+
     for ( my $i = 0 ; $i < scalar @$params ; $i++ ) {
         my $k = $params->[$i];
-        my $v = $params->[++$i];
+        my $v = URI::Escape::uri_escape($params->[++$i] || '', $path_escape_class);
         $v    =~ s/\//%2F/g;
         my $modified = 0;
 
