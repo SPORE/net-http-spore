@@ -133,10 +133,11 @@ has documentation => (
 sub wrap {
     my ( $class, %args ) = @_;
 
+    my $name = $args{name};
     my $code = sub {
         my ( $self, %method_args ) = @_;
 
-        my $method = $self->meta->find_spore_method_by_name( $args{name} );
+        my $method = $self->meta->find_spore_method_by_name( $name );
 
         my $payload =
           ( defined $method_args{spore_payload} )
