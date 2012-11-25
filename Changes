@@ -1,3 +1,7 @@
+0.05 Sun Nov 25 11:40:24 2012
+    - Fix a memory leak in Net::HTTP::Spore::Meta::Method (michaelr)
+    - Fix meta information in the dist.ini file (dolmen)
+
 0.04 Tue Jul 26 11:32:00 2011
     - allow XML::Simple options for Format::XML (fperrad)
     - stringify Net::HTTP::Response to a useful message
