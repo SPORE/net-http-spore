@@ -2,6 +2,7 @@
     - Fix random test failure in t/spore-method/base.t related to random hash
       ordering in perl 5.17.6+ (#19)
     - Add support for PATCH HTTP method (#13, Andreas Marienborg)
+    - Allow anonymous subs to be used as middleware (Brian Phillips)
 
 0.05 Sun Nov 25 11:40:24 2012
     - Fix a memory leak in Net::HTTP::Spore::Meta::Method (michaelr)

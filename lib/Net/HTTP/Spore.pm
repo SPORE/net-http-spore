@@ -192,6 +192,10 @@ or only on some path
 
     $client->enable_if(sub{$_->[0]->path =~ m!/path/to/json/stuff!}, 'Format::JSON');
 
+For very simple middlewares, you can simple pass in an anonymous function
+
+    $client->enable( sub { my $request = shift; ... } );
+
 =head2 METHODS
 
 =over 4
