@@ -36,4 +36,6 @@ ok $method = Net::HTTP::Spore::Meta::Method->wrap(
     required     => [qw/name id/],
 );
 
+ok !$method->has_authentication, 'authentication not set on method';
+
 done_testing;
