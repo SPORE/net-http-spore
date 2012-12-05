@@ -29,6 +29,7 @@ has authentication => (
     isa       => Boolean,
     predicate => 'has_authentication',
     default   => 0,
+    lazy      => 1,
     coerce    => 1,
 );
 has base_url => (
