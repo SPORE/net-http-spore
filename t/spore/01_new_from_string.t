@@ -3,7 +3,7 @@ use warnings;
 use Test::More;
 use Test::Exception;
 
-plan tests => 27;
+plan tests => 28;
 
 use JSON;
 use IO::All;
@@ -35,6 +35,12 @@ my $api_without_path = {
 my $api_without_method = {
     base_url => "http://services.org/restapi",
     methods  => { get_info => { method => 'PET', path => '/show' } },
+};
+
+my $api_with_authentication = {
+    base_url => "http://services.org/restapi",
+    authentication => JSON::true(),
+    methods  => { get_info => { method => 'GET', path => '/show' } },
 };
 
 dies_ok { Net::HTTP::Spore->new_from_spec };
@@ -69,6 +75,8 @@ like $@, qr/Attribute \(method\) does not pass the type constraint/;
 
 ok $client = Net::HTTP::Spore->new_from_string(JSON::encode_json($api_ok));
 ok $client->meta->_find_spore_method_by_name(sub{/^get_info$/});
+
+ok $client = Net::HTTP::Spore->new_from_string(JSON::encode_json($api_with_authentication));
 
 dies_ok {
     Net::HTTP::Spore->new_from_strings('/a/b/c', '/a/b/c');
