@@ -3,7 +3,9 @@ package Net::HTTP::Spore::Role::Description;
 # ABSTRACT: attributes for API description
 
 use Moose::Role;
+use MooseX::Types::Moose qw/ArrayRef/;
 use MooseX::Types::URI qw/Uri/;
+use Net::HTTP::Spore::Meta::Types qw/Boolean/;
 
 has base_url => (
     is       => 'rw',
@@ -14,19 +16,20 @@ has base_url => (
 
 has formats => (
     is        => 'rw',
-    isa       => 'ArrayRef',
+    isa       => ArrayRef,
     predicate => 'has_formats',
 );
 
 has authentication => (
     is        => 'rw',
-    isa       => 'Bool',
+    isa       => Boolean,
     predicate => 'has_authentication',
+    coerce    => 1,
 );
 
 has expected_status => (
     is      => 'rw',
-    isa     => 'Array',
+    isa     => ArrayRef,
     lazy    => 1,
     default => sub { [] },
 );
