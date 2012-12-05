@@ -4,55 +4,21 @@ package Net::HTTP::Spore::Meta::Method;
 
 use JSON;
 use Moose;
-use Moose::Util::TypeConstraints;
 
 use MooseX::Types::Moose qw/Str Int ArrayRef HashRef/;
 use MooseX::Types::URI qw/Uri/;
 
 extends 'Moose::Meta::Method';
 use Net::HTTP::Spore::Response;
+use Net::HTTP::Spore::Meta::Types qw(UriPath HTTPMethod Boolean);
 
-subtype UriPath
-    => as 'Str'
-    => where { $_ =~ m!^/! }
-    => message {"path must start with /"};
-
-enum Method => qw(OPTIONS HEAD GET POST PUT DELETE TRACE);
-
-subtype 'JSON::XS::Boolean' => as 'JSON::XS::Boolean';
-subtype 'JSON::PP::Boolean' => as 'JSON::PP::Boolean';
-subtype 'Boolean'           => as Int => where { $_ eq 1 || $_ eq 0 };
-
-coerce 'Boolean'
-    => from 'JSON::XS::Boolean'
-    => via {
-        if ( JSON::is_bool($_) && $_ == JSON::true ) {
-            return 1
-        }
-        return 0;
-    }
-    => from 'JSON::PP::Boolean'
-    => via {
-        if ( JSON::is_bool($_) && $_ == JSON::true ) {
-            return 1;
-        }
-        return 0;
-    }
-    => from Str
-    => via {
-        if ($_ eq 'true') {
-            return 1;
-        }
-        return 0;
-    };
-
-has path   => ( is => 'ro', isa => 'UriPath', required => 1 );
-has method => ( is => 'ro', isa => 'Method',  required => 1 );
-has description => ( is => 'ro', isa => 'Str', predicate => 'has_description' );
+has path   => ( is => 'ro', isa => UriPath, required => 1 );
+has method => ( is => 'ro', isa => HTTPMethod,  required => 1 );
+has description => ( is => 'ro', isa => Str, predicate => 'has_description' );
 
 has required_payload => (
     is        => 'ro',
-    isa       => 'Boolean',
+    isa       => Boolean,
     predicate => 'payload_is_required',
     lazy      => 1,
     default   => 0,
@@ -60,9 +26,10 @@ has required_payload => (
 );
 has authentication => (
     is        => 'ro',
-    isa       => 'Boolean',
+    isa       => Boolean,
     predicate => 'has_authentication',
     default   => 0,
+    lazy      => 1,
     coerce    => 1,
 );
 has base_url => (
@@ -106,13 +73,13 @@ has required_params => (
 has form_data => (
     traits     => ['Hash'],
     is         => 'ro',
-    isa        => 'HashRef',
+    isa        => HashRef,
     predicate  => 'has_form_data',
     auto_deref => 1,
 );
 has documentation => (
     is      => 'ro',
-    isa     => 'Str',
+    isa     => Str,
     lazy    => 1,
     default => sub {
         my $self = shift;
