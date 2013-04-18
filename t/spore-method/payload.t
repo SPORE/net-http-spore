@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 4;
+use Test::More tests => 6;
 
 use Test::Exception;
 
@@ -12,6 +12,11 @@ my $api_with_payload = {
     methods  => {
         create_user => {
             method           => 'POST',
+            path             => '/user',
+            required_payload => 1,
+        },
+        update_user => {
+            method           => 'PATCH',
             path             => '/user',
             required_payload => 1,
         },
@@ -30,4 +35,7 @@ dies_ok { $obj->create_user(); };
 like $@->body->{error}, qr/this method require a payload/;
 
 dies_ok { $obj->list_user( payload => {} ) };
-like $@->body->{error}, qr/payload requires a PUT or POST method/;
+like $@->body->{error}, qr/payload requires a PUT, PATCH or POST method/;
+
+dies_ok { $obj->update_user(); };
+like $@->body->{error}, qr/this method require a payload/;
