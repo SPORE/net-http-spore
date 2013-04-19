@@ -22,7 +22,7 @@ sub new_from_string {
       Class::MOP::Class->create_anon_class(
         superclasses => ['Net::HTTP::Spore::Core'] );
 
-    my $spore_object = _attach_spec_to_class($string, \%args, $spore_class);
+    my $spore_object = $class->_attach_spec_to_class($string, \%args, $spore_class);
 
     return $spore_object;
 }
@@ -42,7 +42,7 @@ sub new_from_strings {
 
     my $spore_object = undef;
     foreach my $string (@strings) {
-        $spore_object = _attach_spec_to_class($string, $opts, $spore_class, $spore_object);
+        $spore_object = $class->_attach_spec_to_class($string, $opts, $spore_class, $spore_object);
     }
     return $spore_object;
 }
@@ -75,7 +75,7 @@ sub new_from_specs {
 }
 
 sub _attach_spec_to_class {
-    my ( $string, $opts, $class, $object ) = @_;
+    my ( $class, $string, $opts, $spore_class, $object ) = @_;
 
     my $spec;
     try {
@@ -98,9 +98,9 @@ sub _attach_spec_to_class {
         }
 
         if ( !$object ) {
-            $object = $class->new_object(%$opts);
+            $object = $spore_class->new_object(%$opts);
         }
-        $object = _add_methods( $object, $spec->{methods} );
+        $object = $class->_add_methods( $object, $spec->{methods} );
     }
     catch {
         Carp::confess( "unable to create new Net::HTTP::Spore object: " . $_ );
@@ -136,13 +136,13 @@ sub _read_spec {
 }
 
 sub _add_methods {
-    my ($class, $methods_spec) = @_;
+    my ($class, $spore, $methods_spec) = @_;
 
     foreach my $method_name (keys %$methods_spec) {
-        $class->meta->add_spore_method($method_name,
+        $spore->meta->add_spore_method($method_name,
             %{$methods_spec->{$method_name}});
     }
-    $class;
+    $spore;
 }
 
 1;
