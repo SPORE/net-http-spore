@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.06 Fri Apr 19 15:58::33 2013
     - Fix random test failure in t/spore-method/base.t related to random hash
       ordering in perl 5.17.6+ (#19)
     - Add support for PATCH HTTP method (#13, Andreas Marienborg)
