@@ -11,6 +11,8 @@ use URI::Escape;
 use MIME::Base64;
 use Net::HTTP::Spore::Response;
 
+use Encode qw{is_utf8};
+
 has env => (
     is       => 'rw',
     isa      => 'HashRef',
@@ -52,10 +54,18 @@ has headers => (
 sub BUILDARGS {
     my $class = shift;
 
-    if (@_ == 1 && !exists $_[0]->{env}) {
-        return {env => $_[0]};
+    if ( @_ == 1 && !exists $_[0]->{env} ) {
+        return { env => $_[0] };
     }
     return @_;
+}
+
+sub _safe_uri_escape {
+    my ( $self, $str, $unsafe ) = @_;
+    if ( is_utf8($str) ) {
+        utf8::encode($str);
+    }
+    return uri_escape( $str, $unsafe );
 }
 
 sub method {
@@ -160,11 +170,16 @@ sub uri {
     my $base = $self->_uri_base;
 
     my $path_escape_class = '^A-Za-z0-9\-\._~/';
+    my $path = $self->_safe_uri_escape( $path_info || '', $path_escape_class );
 
-    my $path = URI::Escape::uri_escape($path_info || '', $path_escape_class);
-
-    if (defined $query_string && length($query_string) > 0) {
-        $path .= '?' . $query_string;
+    if ( defined $query_string && length($query_string) > 0 ) {
+        my $is_interrogation = index( $path, '?' );
+        if ( $is_interrogation >= 0 ) {
+            $path .= '&' . $query_string;
+        }
+        else {
+            $path .= '?' . $query_string;
+        }
     }
 
     $base =~ s!/$!! if $path =~ m!^/!;
@@ -179,20 +194,25 @@ sub _path {
     my @params = @{ $self->env->{'spore.params'} || [] };
 
     my $j = 0;
-    for (my $i = 0; $i < scalar @params; $i++) {
+    for ( my $i = 0; $i < scalar @params; $i++ ) {
         my $key = $params[$i];
         my $value = $params[++$i];
-        if (!$value) {
+        $value = (defined $value) ? $value : '' ;
+        if (! length($value)) {
             $query_string .= $key;
             last;
         }
+
+        # add params as string vide to query_string even it's undefined
         unless ( $path && $path =~ s/\:$key/$value/ ) {
-            $query_string .= $key . '=' . $value;
+            $query_string .= $key . '=' . $self->_safe_uri_escape($value);
             $query_string .= '&' if $query_string && scalar @params;
         }
     }
 
     $query_string =~ s/&$// if $query_string;
+    $self->env->{QUERY_STRING} = $query_string;
+
     return ( $path, $query_string );
 }
 
