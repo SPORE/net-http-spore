@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+    - Proper handling of UTF-8 content in query string escaping 
+    - Support for path with question marks in spore specs
+      (Alexis Sukrieh / Weborama)
+
 0.06 Fri Apr 19 15:58::33 2013
     - Fix random test failure in t/spore-method/base.t related to random hash
       ordering in perl 5.17.6+ (#19)
