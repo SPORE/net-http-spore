@@ -174,7 +174,9 @@ sub uri {
 sub _path {
     my $self = shift;
 
-    my $query_string;
+	# TODO: Figure out why this code exists when it doesn't seem to be called.
+
+    my $query_string = '';
     my $path = $self->env->{PATH_INFO};
     my @params = @{ $self->env->{'spore.params'} || [] };
 
@@ -182,13 +184,15 @@ sub _path {
     for (my $i = 0; $i < scalar @params; $i++) {
         my $key = $params[$i];
         my $value = $params[++$i];
-        if (!$value) {
-            $query_string .= $key;
-            last;
-        }
-        unless ( $path && $path =~ s/\:$key/$value/ ) {
-            $query_string .= $key . '=' . $value;
-            $query_string .= '&' if $query_string && scalar @params;
+		$query_string .= '&' if $query_string;
+
+		if (defined $value && $value ne '') {
+			unless ( $path && $path =~ s/\:$key/$value/ ) {
+				$query_string .= URI::Escape::uri_escape($key) . '=' . URI::Escape::uri_escape($value);
+			}
+
+		} else { # Empty value
+            $query_string .= URI::Escape::uri_escape($key);
         }
     }
 
@@ -297,9 +301,9 @@ sub finalize {
 
         if ($modified == 0) {
             if (defined $v) {
-                push @$query, $k.'='.$v;
+                push @$query, URI::Escape::uri_escape($k).'='.URI::Escape::uri_escape($v);
             }else{
-                push @$query, $k;
+                push @$query, URI::Escape::uri_escape($k);
             }
         }
     }
