@@ -13,7 +13,8 @@ has api_useragent => (
     default => sub {
         my $self = shift;
         my $ua = LWP::UserAgent->new();
-        $ua->agent( "Net::HTTP::Spore v" . $Net::HTTP::Spore::VERSION . " (Perl)" );
+		my $version = $Net::HTTP::Spore::VERSION || 'GIT';
+        $ua->agent( "Net::HTTP::Spore v$version (Perl)" );
         $ua->env_proxy;
         $ua->max_redirect(0);
         return $ua;
