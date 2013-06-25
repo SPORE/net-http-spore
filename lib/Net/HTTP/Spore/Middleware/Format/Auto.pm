@@ -6,7 +6,7 @@ extends 'Net::HTTP::Spore::Middleware::Format';
 
 use Try::Tiny;
 
-has seriliazer => (
+has serializer => (
     is      => 'rw',
     isa     => HashRef [Object],
     lazy    => 1,
