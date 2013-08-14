@@ -180,7 +180,7 @@ Some specifications for well-known services are available L<http://github.com/SP
 
 =head2 CLIENT CREATION
 
-First you need to create a client. This can be done using two methods, B<new_from_spec> and B<new_from_string>. The client will read the specification file to create a appropriate methods to interact with the API.
+First you need to create a client. This can be done using two methods, B<new_from_spec> and B<new_from_string>. The client will read the specification file to create the appropriate methods to interact with the API.
 
 =head2 MIDDLEWARES
 
@@ -192,7 +192,7 @@ or only on some path
 
     $client->enable_if(sub{$_->[0]->path =~ m!/path/to/json/stuff!}, 'Format::JSON');
 
-For very simple middlewares, you can simple pass in an anonymous function
+For very simple middlewares, you can simply pass in an anonymous function
 
     $client->enable( sub { my $request = shift; ... } );
 
