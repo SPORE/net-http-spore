@@ -106,9 +106,11 @@ sub _base_string {
 
     my $uri =
         ( $scheme || 'https' ) . "://"
-      . $req->env->{SERVER_NAME}
-      . $req->env->{SCRIPT_NAME}
-      . $req->env->{PATH_INFO};
+      . $req->env->{SERVER_NAME};
+    if ( $port ) { $uri .= ":$port"; }
+    $uri .=  $req->env->{SCRIPT_NAME}
+           . $req->env->{PATH_INFO};
+
 
     foreach my $k (keys %$oparams){
         push @$query_keys, $k;
