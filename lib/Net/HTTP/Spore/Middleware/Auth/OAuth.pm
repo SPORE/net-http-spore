@@ -54,10 +54,14 @@ sub call {
     foreach my $k ( keys %$oauth_params ) {
         $oauth_params->{$k} = uri_escape( $oauth_params->{$k} );
     }
-
+    #save the environment so the request will no be finalized twice
+    my $env = { %{$req->env} h};
     $req->finalize;
 
     my $oauth_sig = $self->_oauth_sig( $req, $oauth_params );
+    #put back the environment the signature is now computed
+    $req->env($env);
+    
     $req->header( 'Authorization' =>
           $self->_build_auth_string( $oauth_params, $oauth_sig ) );
 }
