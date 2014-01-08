@@ -12,7 +12,7 @@ subtype UriPath,
     where { $_ =~ m!^/! },
     message {"path must start with /"};
 
-enum HTTPMethod, qw(OPTIONS HEAD GET POST PUT DELETE TRACE PATCH);
+enum HTTPMethod, [qw(OPTIONS HEAD GET POST PUT DELETE TRACE PATCH)];
 
 subtype Boolean,
     as Int,
