@@ -1,6 +1,7 @@
 package Net::HTTP::Spore::Role::Middleware;
 
 use Moose::Role;
+use Class::Load;
 use Scalar::Util qw/blessed/;
 
 has middlewares => (
@@ -16,7 +17,7 @@ has middlewares => (
 sub _load_middleware {
     my ( $self, $mw, $cond, @args ) = @_;
 
-    Class::MOP::load_class($mw) unless blessed($mw);
+    Class::Load::load_class($mw) unless blessed($mw);
 
     my $code = $mw->wrap( $cond, @args );
     $self->_trace_msg('== enabling middleware %s', $mw);
@@ -51,7 +52,7 @@ sub enable_if {
     confess "condition must be a code ref" if (!$cond || ref $cond ne 'CODE');
 
     if(ref($mw) eq 'CODE'){ # anonymous middleware
-        Class::MOP::load_class('Net::HTTP::Spore::Middleware');
+        Class::Load::load_class('Net::HTTP::Spore::Middleware');
         my $anon = Class::MOP::Class->create_anon_class(
             superclasses => ['Net::HTTP::Spore::Middleware'],
             methods => {
