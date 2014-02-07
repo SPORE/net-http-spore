@@ -20,8 +20,9 @@ has api_secret => (isa => 'Str', is => 'rw', required => 1);
 sub call {
     my ($self, $req) = @_;
 
-
     return unless $self->should_authenticate($req);
+
+    my ($path, $query_string) = $req->_path;
 
     my $keyname = $self->key_name;
     if (!defined($keyname)) {
@@ -31,21 +32,19 @@ sub call {
     my $nonce = time(); # XXX need $nonce++ and error handling to do more than
 			# one query per second
     my $content = $req->body;
-    my $query = $req->query_string;
-    #$req->query_string(undef);
     if (!defined($content) || length($content) == 0) {
 	$content = "";
     } else {
         $content .= "&";
     }
-    if (defined($query) && length($query) != 0) {
-	printf STDERR "ApiKey: query='%s'\n", $query;
-	#$content .= $query."&";
-    }
     $content .= "nonce=".$nonce;
+    if (defined($query_string)) {
+        $content .= "&".$query_string;
+    }
+    printf STDERR "ApiKey: content = '%s'\n", $content;
     $req->body($content);
     $req->header('Content-Type' => 'application/x-www-form-urlencoded');
-    $req->header($self->key_name => $self->api_key);
+    $req->header($keyname => $self->api_key);
     $req->header('Sign' => hmac_sha512_hex($content, $self->api_secret));
 }
 
