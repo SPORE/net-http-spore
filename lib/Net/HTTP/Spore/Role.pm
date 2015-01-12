@@ -2,7 +2,7 @@ package Net::HTTP::Spore::Role;
 
 # ABSTRACT: Role to easily add multiples Spore clients to your class
 
-use MooseX::Role::Parameterized;
+use MooseX::Role::Parameterized 1.01;
 use Net::HTTP::Spore;
 
 parameter spore_clients => (isa => 'ArrayRef[HashRef]', required => 1);
