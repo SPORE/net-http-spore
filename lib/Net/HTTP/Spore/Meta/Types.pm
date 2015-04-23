@@ -24,7 +24,7 @@ subtype JSONBoolean,
 
 coerce Boolean,
     from JSONBoolean,
-      via { return $_ == JSON::true() ? 1 : 0 },
+      via { return int($_) ? 1 : 0 },
     from Str,
       via { return $_ eq 'true' ? 1 : 0 };
 
