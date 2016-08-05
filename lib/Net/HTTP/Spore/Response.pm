@@ -4,6 +4,7 @@ package Net::HTTP::Spore::Response;
 
 use strict;
 use warnings;
+use Data::Dumper;
 
 use overload
     '@{}' => \&finalize,
@@ -100,6 +101,9 @@ sub to_string {
     if ($self->{body} =~ /read timeout/){
         $status .= " - read timeout";
     }
+	if ($self->{status} == 599) {
+		$status .= " - ".Dumper($self->{body});
+	}
     return $status;
 }
 
