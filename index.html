@@ -1,111 +1,189 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset='utf-8'>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-  <title>franckcuny/net-http-spore @ GitHub</title>
-  <link rel="stylesheet" href="/static/css/project.css" media="screen, projection" />
-  <script type="text/javascript"> 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-18479905-1']);
-    _gaq.push(['_trackPageview']);
- 
-    (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script> 
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-</head>
+    <title>Net::HTTP::Spore by franckcuny</title>
+  </head>
 
-<body>
-  <a href="http://github.com/franckcuny/net-http-spore"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Net::HTTP::Spore</h1>
+        <h2>Perl implementation for SPORE</h2>
+        <a href="https://github.com/franckcuny/net-http-spore" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
 
-  <div id="container">
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="name" class="anchor" href="#name" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>NAME</h1>
 
-    <div class="download">
-      <a href="http://github.com/franckcuny/net-http-spore/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/franckcuny/net-http-spore/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-    </div>
+<p>Net::HTTP::Spore - SPORE client</p>
 
-    <h1><a href="http://github.com/franckcuny/net-http-spore">net-http-spore</a>
-      <span class="small">by <a href="http://github.com/franckcuny">franckcuny</a></span></h1>
+<p><a href="https://travis-ci.org/franckcuny/net-http-spore"><img src="https://travis-ci.org/franckcuny/net-http-spore.svg?branch=master" alt="Build Status"></a></p>
 
-    <div class="description">
-      Perl implementation for SPORE
-    </div>
+<h1>
+<a id="version" class="anchor" href="#version" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>VERSION</h1>
 
-    <h2>Synopsis</h2>
-    <pre>
-my $client = Net::HTTP::Spore->new_from_spec('twitter.json');
-$client->enable('Format::JSON');
+<p>version 0.07</p>
 
-my $timeline = $client->public_timeline(format => 'json');
-my $tweets = $timeline->body;
+<h1>
+<a id="synopsis" class="anchor" href="#synopsis" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>SYNOPSIS</h1>
+
+<pre><code>my $client = Net::HTTP::Spore-&gt;new_from_spec('twitter.json');
+
+# from JSON specification string
+my $client = Net::HTTP::Spore-&gt;new_from_string($json);
+
+# for identica
+my $client = Net::HTTP::Spore-&gt;new_from_spec('twitter.json', base_url =&gt; 'http://identi.ca/com/api');
+
+$client-&gt;enable('Format::JSON');
+
+my $timeline = $client-&gt;public_timeline(format =&gt; 'json');
+my $tweets = $timeline-&gt;body;
 
 foreach my $tweet (@$tweets) {
-  print $tweet->{user}->{screen_name}. " says ".$tweet->{text}."\n";
+    print $tweet-&gt;{user}-&gt;{screen_name}. " says ".$tweet-&gt;{text}."\n";
 }
 
-my $friends_timeline = $client->friends_timeline(format => 'json');    </pre>
+my $friends_timeline = $client-&gt;friends_timeline(format =&gt; 'json');
+</code></pre>
 
-    <h2>Documentation</h2>
+<h1>
+<a id="description" class="anchor" href="#description" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DESCRIPTION</h1>
 
-    This module is an implementation of the SPORE specification. To
-    use this client, you need to use or to write a SPORE specification
-    of an API. <a href="https://github.com/SPORE/api-descriptio">Some specifications are available</a>.
+<p>This module is an implementation of the SPORE specification.</p>
 
-    <h3>Client creation</h3>
+<p>To use this client, you need to use or to write a SPORE specification of an
+API.  A description of the SPORE specification format is available at
+<a href="http://github.com/SPORE/specifications/blob/master/spore_description.pod">http://github.com/SPORE/specifications/blob/master/spore_description.pod</a></p>
 
-    First you need to create a client. This can be done using two methods, new_from_spec and new_from_string. The client will read the specification file to create a appropriate methods to interact with the API.
+<p>Some specifications for well-known services are available
+<a href="http://github.com/SPORE/api-description">http://github.com/SPORE/api-description</a>.</p>
 
-    <h3>Middlewares</h3>
+<h2>
+<a id="client-creation" class="anchor" href="#client-creation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CLIENT CREATION</h2>
 
-    It's possible to activate some middlewares to extend the usage of the client. If you're using an API that discuss in JSON, you can enable the middleware Net::HTTP::Spore::Middleware::JSON.
+<p>First you need to create a client. This can be done using two methods,
+<strong>new_from_spec</strong> and <strong>new_from_string</strong>. The client will read the specification
+file to create the appropriate methods to interact with the API.</p>
 
-    <pre>$client->enable('Format::JSON');</pre>
-    
-    or only on some path
+<h2>
+<a id="middlewares" class="anchor" href="#middlewares" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MIDDLEWARES</h2>
 
-    <pre>
-$client->enable_if(
-  sub{$_->[0]->path =~ m!/path/to/json/stuff!},
-  'Format::JSON'
-);    </pre>
+<p>It's possible to activate some middlewares to extend the usage of the client.
+If you're using an API that discuss in JSON, you can enable the middleware
+<a href="https://metacpan.org/pod/Net::HTTP::Spore::Middleware::JSON">Net::HTTP::Spore::Middleware::JSON</a>.</p>
 
-    <h2>Authors</h2>
-    <p>Tim Bunce (Tim.Bunce@pobox.com)<br/>franck cuny (franck@lumberjaph.net)<br/>Nils Grunwald (nils@grunwald.fr)<br/><br/>      </p>
+<pre><code>$client-&gt;enable('Format::JSON');
+</code></pre>
 
-    <h2>Contact</h2>
+<p>or only on some path</p>
 
-    <p>franck (franck@lumberjaph.net)<br/>      </p>
+<pre><code>$client-&gt;enable_if(sub{$_-&gt;[0]-&gt;path =~ m!/path/to/json/stuff!}, 'Format::JSON');
+</code></pre>
 
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/franckcuny/net-http-spore/zipball/master">zip</a> or
-      <a href="http://github.com/franckcuny/net-http-spore/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/franckcuny/net-http-spore</pre>
-    </p>
+<p>For very simple middlewares, you can simply pass in an anonymous function</p>
 
-    <h2>Copyright and license</h2>
+<pre><code>$client-&gt;enable( sub { my $request = shift; ... } );
+</code></pre>
 
-    This software is copyright (c) 2010 by <a href="http://linkfluence.net">linkfluence</a>.<br /><br />
+<h2>
+<a id="methods" class="anchor" href="#methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>METHODS</h2>
 
-    This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5 programming language system itself.
+<ul>
+<li>
+<p>new_from_spec($specification_file, %args)</p>
 
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/franckcuny/net-http-spore">franckcuny/net-http-spore</a>
+<p>Create and return a <a href="https://metacpan.org/pod/Net::HTTP::Spore::Core">Net::HTTP::Spore::Core</a> object, with methods generated
+from the specification file. The specification file can either be a file on
+disk or a remote URL.</p>
+</li>
+<li>
+<p>new_from_string($specification_string, %args)</p>
+
+<p>Create and return a <a href="https://metacpan.org/pod/Net::HTTP::Spore::Core">Net::HTTP::Spore::Core</a> object, with methods
+generated from a JSON specification string.</p>
+</li>
+</ul>
+
+<h2>
+<a id="tracing" class="anchor" href="#tracing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>TRACING</h2>
+
+<p><a href="https://metacpan.org/pod/Net::HTTP::Spore">Net::HTTP::Spore</a> provides a way to trace what's going on when doing a
+request.</p>
+
+<h3>
+<a id="enabling-trace" class="anchor" href="#enabling-trace" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Enabling Trace</h3>
+
+<p>You can enable tracing using the environment variable <strong>SPORE_TRACE</strong>. You can
+also enable tracing at construct time by adding <strong>trace =&gt; 1</strong> when calling
+<strong>new_from_spec</strong>.</p>
+
+<h3>
+<a id="trace-output" class="anchor" href="#trace-output" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Trace Output</h3>
+
+<p>By default output will be directed to <strong>STDERR</strong>. You can specify another
+default output:</p>
+
+<pre><code>SPORE_TRACE=1=log.txt
+</code></pre>
+
+<p>or</p>
+
+<pre><code>-&gt;new_from_spec('spec.json', trace =&gt; '1=log.txt');
+</code></pre>
+
+<h1>
+<a id="authors" class="anchor" href="#authors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>AUTHORS</h1>
+
+<ul>
+<li>franck cuny <a href="mailto:franck@lumberjaph.net">franck@lumberjaph.net</a>
+</li>
+<li>Ash Berlin <a href="mailto:ash@cpan.org">ash@cpan.org</a>
+</li>
+</ul>
+
+<h1>
+<a id="copyright-and-license" class="anchor" href="#copyright-and-license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>COPYRIGHT AND LICENSE</h1>
+
+<p>This software is copyright (c) 2012 by linkfluence.</p>
+
+<p>This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/franckcuny/net-http-spore/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/franckcuny/net-http-spore/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/franckcuny/net-http-spore"></a> is maintained by <a href="https://github.com/franckcuny">franckcuny</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
 
-  </div>
-
   
-</body>
+  </body>
 </html>
