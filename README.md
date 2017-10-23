@@ -2,7 +2,7 @@
 
 Net::HTTP::Spore - SPORE client
 
-[![Build Status](https://travis-ci.org/franckcuny/net-http-spore.svg?branch=master)](https://travis-ci.org/franckcuny/net-http-spore)
+[![Build Status](https://travis-ci.org/SPORE/net-http-spore.svg?branch=master)](https://travis-ci.org/SPORE/net-http-spore)
 
 # VERSION
 
@@ -99,12 +99,13 @@ or
 
 # AUTHORS
 
-- franck cuny <franck@lumberjaph.net>
+- Franck Cuny <franck.cuny@gmail.com>
 - Ash Berlin <ash@cpan.org>
+- Ahmad Fatoum <athreef@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by linkfluence.
+This software is copyright (c) 2012 by Linkfluence.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

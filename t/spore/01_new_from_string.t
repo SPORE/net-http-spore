@@ -15,7 +15,7 @@ my $api2_spec = 't/specs/api2.json';
 my %args = ( base_url => 'http://localhost/', );
 
 my $github_spec =
-  "http://github.com/franckcuny/spore/raw/master/services/github.json";
+  "http://github.com/SPORE/spore/raw/master/services/github.json";
 
 my $api_ok = {
     base_url => "http://services.org/restapi",
