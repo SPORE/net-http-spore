@@ -1,4 +1,7 @@
 {{$NEXT}}
+    - Allowing use of ":" and "@" in params (Fixes #6)
+    - Fix compatibility with JSON::XS 3.01
+    - Require MooseX::Role::Parameterized version 1.01
 
 0.07 Mon Oct 23 22:01::37 2017
     - Update files to reflect repository migration

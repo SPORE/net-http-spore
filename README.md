@@ -6,7 +6,7 @@ Net::HTTP::Spore - SPORE client
 
 # VERSION
 
-version 0.07
+version 0.08
 
 # SYNOPSIS
 
