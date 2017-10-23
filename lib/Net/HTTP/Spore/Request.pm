@@ -10,6 +10,7 @@ use HTTP::Request;
 use URI::Escape;
 use MIME::Base64;
 use Net::HTTP::Spore::Response;
+use Encode qw{is_utf8};
 
 has env => (
     is       => 'rw',
@@ -160,8 +161,12 @@ sub uri {
     my $base = $self->_uri_base;
 
     my $path_escape_class = '^A-Za-z0-9\-\._~/';
+    my $path_string = $path_info || '';
+    if (is_utf8($path_string)) {
+	$path_string = utf8::encode($path_string);
+    }
 
-    my $path = URI::Escape::uri_escape($path_info || '', $path_escape_class);
+    my $path = URI::Escape::uri_escape($path_string, $path_escape_class);
 
     if (defined $query_string && length($query_string) > 0) {
         $path .= '?' . $query_string;
