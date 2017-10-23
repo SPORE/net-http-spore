@@ -1,6 +1,15 @@
 {{$NEXT}}
 
 0.07 Mon Oct 23 22:01::37 2017
+    - Update files to reflect repository migration
+    - replace deprecated plugins (#40, choroba)
+    - Merge pull request #36 from chiselwright/tgz_encoding
+    - Merge pull request #35 from chiselwright/enum_arrayref
+    - Some typo fixes (#24, #26)
+    - Set 'bytes' encoding for t/specs/content.tgz
+    - Wrap enum values in arrayref (franckcuny/net-http-spore#30)
+    - Use Class::Load::load_class instead of Class::MOP::load_class (#33, chiselwright)
+    - Wrap enum values in arrayref (franckcuny/net-http-spore#30)
 
 0.06 Fri Apr 19 15:58::33 2013
     - Fix random test failure in t/spore-method/base.t related to random hash
