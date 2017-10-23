@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.07 Mon Oct 23 22:01::37 2017
+
 0.06 Fri Apr 19 15:58::33 2013
     - Fix random test failure in t/spore-method/base.t related to random hash
       ordering in perl 5.17.6+ (#19)
