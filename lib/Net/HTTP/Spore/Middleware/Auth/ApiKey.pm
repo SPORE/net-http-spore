@@ -30,10 +30,10 @@ sub call {
     }
 
     my $nonce = time(); # XXX need $nonce++ and error handling to do more than
-			# one query per second
+                        # one query per second
     my $content = $req->body;
     if (!defined($content) || length($content) == 0) {
-	$content = "";
+        $content = "";
     } else {
         $content .= "&";
     }
@@ -74,26 +74,3 @@ version 0.06
 =head1 DESCRIPTION
 
 Net::HTTP::Spore::Middleware::Auth::ApiKey is a middleware to handle authentication mechanism that requires a specific header name.
-
-=head1 AUTHORS
-
-=over 4
-
-=item *
-
-franck cuny <franck@lumberjaph.net>
-
-=item *
-
-Ash Berlin <ash@cpan.org>
-
-=back
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2012 by linkfluence.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
