@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.08 Thu Oct 26 21:35::25 2017
     - Allowing use of ":" and "@" in params (Fixes #6)
     - Fix compatibility with JSON::XS 3.01
     - Require MooseX::Role::Parameterized version 1.01
