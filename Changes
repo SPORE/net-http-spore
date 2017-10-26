@@ -2,6 +2,10 @@
     - Allowing use of ":" and "@" in params (Fixes #6)
     - Fix compatibility with JSON::XS 3.01
     - Require MooseX::Role::Parameterized version 1.01
+    - add Auth::ApiKey method (#37, toddfries)
+    - Add test for Format::Text middleware (#42, gempesaw)
+    - Proper handling of UTF-8 content in query string escaping 
+    - Support for path with question marks in spore specs (Alexis Sukrieh / Weborama)
 
 0.07 Mon Oct 23 22:01::37 2017
     - Update files to reflect repository migration
