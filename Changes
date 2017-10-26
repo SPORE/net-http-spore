@@ -7,6 +7,7 @@
     - Proper handling of UTF-8 content in query string escaping 
     - Support for path with question marks in spore specs (Alexis Sukrieh / Weborama)
     - Fix OAuth issue with non-standard port (#28, unickuity)
+    - Allow form parameters to contain forward slashes (#15, magnachef)
 
 0.07 Mon Oct 23 22:01::37 2017
     - Update files to reflect repository migration

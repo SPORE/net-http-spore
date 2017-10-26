@@ -62,6 +62,7 @@ sub BUILDARGS {
 
 sub _safe_uri_escape {
     my ( $self, $str, $unsafe ) = @_;
+    return unless defined $str;
     if ( is_utf8($str) ) {
         utf8::encode($str);
     }
@@ -167,23 +168,21 @@ sub uri {
         $query_string = $path_info[1] if !$query_string;
     }
 
+    $path_info //= '';
     my $base = $self->_uri_base;
 
-    my $path_escape_class = '^A-Za-z0-9\-\._~/@\:';
-    my $path = $self->_safe_uri_escape( $path_info || '', $path_escape_class );
-
     if ( defined $query_string && length($query_string) > 0 ) {
-        my $is_interrogation = index( $path, '?' );
+        my $is_interrogation = index( $path_info, '?' );
         if ( $is_interrogation >= 0 ) {
-            $path .= '&' . $query_string;
+            $path_info .= '&' . $query_string;
         }
         else {
-            $path .= '?' . $query_string;
+            $path_info .= '?' . $query_string;
         }
     }
 
-    $base =~ s!/$!! if $path =~ m!^/!;
-    return URI->new( $base . $path )->canonical;
+    $base =~ s!/$!! if $path_info =~ m!^/!;
+    return URI->new( $base . $path_info )->canonical;
 }
 
 sub _path {
@@ -197,6 +196,7 @@ sub _path {
     for ( my $i = 0; $i < scalar @params; $i++ ) {
         my $key = $params[$i];
         my $value = $params[++$i];
+
         $value = (defined $value) ? $value : '' ;
         if (! length($value)) {
             $query_string .= $key;
@@ -290,9 +290,12 @@ sub finalize {
     my $query = [];
     my $form  = {};
 
+    my $path_escape_class = '^A-Za-z0-9\-\._~/@\:';
+
     for ( my $i = 0 ; $i < scalar @$params ; $i++ ) {
         my $k = $params->[$i];
         my $v = $params->[++$i];
+        $v = $self->_safe_uri_escape($v || '', $path_escape_class) if defined $v;
         my $modified = 0;
 
         if ($path_info && $path_info =~ s/\:$k/=$k/) {
