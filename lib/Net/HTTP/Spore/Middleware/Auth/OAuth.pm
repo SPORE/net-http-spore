@@ -54,10 +54,14 @@ sub call {
     foreach my $k ( keys %$oauth_params ) {
         $oauth_params->{$k} = uri_escape( $oauth_params->{$k} );
     }
-
+    # save the environment so the request will no be finalized twice
+    my $env = $req->env;
     $req->finalize;
 
     my $oauth_sig = $self->_oauth_sig( $req, $oauth_params );
+    # put back the environment the signature is now computed
+    $req->env($env);
+
     $req->header( 'Authorization' =>
           $self->_build_auth_string( $oauth_params, $oauth_sig ) );
 }
@@ -106,9 +110,11 @@ sub _base_string {
 
     my $uri =
         ( $scheme || 'https' ) . "://"
-      . $req->env->{SERVER_NAME}
-      . $req->env->{SCRIPT_NAME}
-      . $req->env->{PATH_INFO};
+        . $req->env->{SERVER_NAME};
+    if ( $port ) { $uri .= ":$port"; }
+    $uri .= $req->env->{SCRIPT_NAME}
+          . $req->env->{PATH_INFO};
+
 
     foreach my $k (keys %$oparams){
         push @$query_keys, $k;
