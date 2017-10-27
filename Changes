@@ -1,4 +1,5 @@
 {{$NEXT}}
+    - Fix breakage on Perl 5.8
 
 0.08 Thu Oct 26 21:35::25 2017
     - Allowing use of ":" and "@" in params (Fixes #6)

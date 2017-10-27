@@ -168,7 +168,7 @@ sub uri {
         $query_string = $path_info[1] if !$query_string;
     }
 
-    $path_info //= '';
+    $path_info = $path_info // '';
     my $base = $self->_uri_base;
 
     if ( defined $query_string && length($query_string) > 0 ) {
