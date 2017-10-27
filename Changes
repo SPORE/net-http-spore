@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.09 Fri Oct 27 08:52::42 2017
     - Fix breakage on Perl 5.8
 
 0.08 Thu Oct 26 21:35::25 2017
